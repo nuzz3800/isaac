@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { usePrayers } from "../api/prayers";
 import { useEvents } from "../api/events";
-import { useMeeting } from "../api/meetings";
 import {
   todayISO,
   formatDate,
@@ -15,7 +14,6 @@ import ChurchLogo from "../Logo";
 export default function Dashboard({ me, members }) {
   const prayers = usePrayers();
   const events = useEvents();
-  const meeting = useMeeting();
   const today = todayISO();
 
   const hour = new Date().getHours();
@@ -62,28 +60,6 @@ export default function Dashboard({ me, members }) {
         {greet}, {me.name}님
       </p>
       <h1 className="dash-title">{"서로를 향한 마음이\n모이는 곳"}</h1>
-
-      {meeting ? (
-        <Link to="/meeting" className="panel highlight meeting-live">
-          <div className="row-between">
-            <b>🔴 모임 진행 중이에요</b>
-            <span className="dday-chip">함께하기 →</span>
-          </div>
-          <span className="member-sub">
-            누르면 진행 중인 모임 화면으로 들어가요
-          </span>
-        </Link>
-      ) : (
-        <Link to="/meeting" className="panel meeting-card">
-          <div className="row-between">
-            <b>☀️ 주일 모임 모드</b>
-            <span className="chevron">›</span>
-          </div>
-          <span className="member-sub">
-            기도 돌아보기부터 놀이까지, 모임 순서대로 함께 진행해요
-          </span>
-        </Link>
-      )}
 
       <section className="panel stats-panel">
         <div className="row-between">
