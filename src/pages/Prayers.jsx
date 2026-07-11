@@ -130,6 +130,9 @@ export default function Prayers({ members, myId }) {
                   <div className="row-between">
                     <b>
                       {author ? `${author.emoji} ${author.name}` : "익명"}
+                      {p.answered && (
+                        <span className="answered-chip">🌱 응답</span>
+                      )}
                     </b>
                     {mine && editingId !== id && (
                       <span>

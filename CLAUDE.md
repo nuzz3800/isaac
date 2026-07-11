@@ -30,6 +30,7 @@
 | `/prayers` | 기도 | 주별(일요일 시작) 기도제목, 🙏 함께 기도해요 토글 |
 | `/events` | 일정 | 일정 등록, D-day, 참석/불참 RSVP |
 | `/play` | 놀이 | 콘텐츠 허브 — 거짓말게임 등 |
+| `/meeting` | 모임 모드 | 주일 모임 진행 러너 (아래 참고) — 탭엔 없고 홈 카드로 진입 |
 | `/game` | 거짓말게임 | **게이트/프로필 없이 접근 가능** (QR 손님용). 옛 링크 `/?room=` → `/game?room=` 리다이렉트 |
 
 ## 정체성/보안 모델 (소규모 신뢰 기반)
@@ -40,6 +41,28 @@
 - DB 규칙은 현재 테스트 모드 — **2026-08 초 만료 예정. 만료 전 `rooms`/`members` 등
   경로별 open 규칙으로 교체 필요** (기도제목이 있으니 장기적으로 강화 검토)
 
+## 제품 방향 (중요)
+
+이 사이트는 **주일 하루 집중 사용**을 전제로 설계한다 (사용자가 명시적으로 결정).
+평일 사용을 가정한 기능(맛집 리스트, 익명 카드, 스트릭 등)은 만들지 않는다.
+핵심 축 두 가지: ① 주일 모임의 운영체제(모임 모드), ② 쌓이는 기록 보관소(기도 응답 등).
+평일 접점은 단톡방에 공유하는 링크로만. 출석 랭킹·참여 압박 기능 금지.
+
+## 모임 모드 (`/meeting`)
+
+거짓말게임과 같은 "한 명이 진행하면 모두 따라가는" 동기화 패턴.
+`meeting` 싱글턴 노드를 전원이 구독, 아무나 시작/진행 가능 (신뢰 기반).
+단계: ① 지난주 기도 돌아보기(한 개씩 넘기며 `answered` 🌱 체크) →
+② 이번 주 기도제목 그 자리에서 작성(실시간 목록) → ③ 일정 확인+RSVP → ④ 놀이 & 마무리.
+종료 시 `meetingLog`에 요약 보관 (추후 '사랑방 역사' 재료).
+
+## 개발 워크플로우
+
+기능 개발은 **브랜치 + PR**로 진행 (main 직접 커밋 지양, 사용자 결정).
+`gh` CLI 미설치 — 브랜치 푸시 후 GitHub 웹에서 PR 생성.
+리뷰용 미리보기: `firebase hosting:channel:deploy <이름> --project issac-1abff` (임시 URL 발급).
+머지 후 main에서 `npm run build` → `firebase deploy --only hosting`.
+
 ## 데이터 모델 (Firebase RTDB)
 
 ```
@@ -47,7 +70,10 @@ config/passcode: string?              // 있으면 입장 암호 게이트 켜�
 members/{memberId}: { name, emoji, birthMonth?, birthDay?, birthYear?,
                       mbti?, oneLiner?, likes?, createdAt }
 prayers/{prayerId}: { memberId, text, weekKey(일요일 ISO), createdAt,
-                      prayedBy: { memberId: true } }
+                      prayedBy: { memberId: true },
+                      answered?: true, answeredAt? }   // 🌱 모임 모드에서 체크
+meeting: { date, startedBy, startedAt, step(0~3), reviewIndex }  // 진행 중일 때만 존재
+meetingLog/{id}: 끝난 모임 요약 { ...meeting, prayersShared, answeredChecked, endedAt }
 events/{eventId}:   { title, date(ISO), time?, place?, note?, createdBy,
                       createdAt, rsvp: { memberId: "yes"|"no" } }
 rooms/{roomCode}:   거짓말게임 (아래 참고)
