@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createMember, updateMember } from "../api/members";
 import { parseCohortYear } from "../dates";
+import { QUESTIONS } from "../questions";
 
 const EMOJIS = [
   "😀", "😎", "🥰", "🤗", "😇", "🤓",
@@ -25,8 +26,17 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
   );
   const [mbti, setMbti] = useState(initial?.mbti || "");
   const [likes, setLikes] = useState(initial?.likes || "");
+  const [answers, setAnswers] = useState(initial?.answers || {});
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const answeredCount = Object.values(answers).filter((v) =>
+    (v || "").trim()
+  ).length;
+
+  function setAnswer(id, value) {
+    setAnswers((prev) => ({ ...prev, [id]: value }));
+  }
 
   async function save() {
     const trimmedName = name.trim();
@@ -38,6 +48,11 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
 
     setBusy(true);
     setError("");
+    const cleanAnswers = {};
+    for (const q of QUESTIONS) {
+      const v = (answers[q.id] || "").trim();
+      if (v) cleanAnswers[q.id] = v;
+    }
     const data = {
       name: trimmedName,
       emoji,
@@ -46,6 +61,7 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
       birthYear: cohort ? parseCohortYear(cohort) : null,
       mbti: mbti || null,
       likes: likes.trim() || null,
+      answers: Object.keys(cleanAnswers).length ? cleanAnswers : null,
     };
     try {
       if (memberId) {
@@ -149,6 +165,28 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
           value={likes}
           onChange={(e) => setLikes(e.target.value)}
         />
+
+        <div className="qna-head">
+          <label className="field-label">
+            나를 알려주는 문답 · {answeredCount}개 답함
+          </label>
+          <p className="hint hint-left">
+            끌리는 것만 답해도 돼요. 답한 문답은 나중에 '누구일까요?' 퀴즈의
+            문제가 돼요 👀 (5개 이상 추천!)
+          </p>
+        </div>
+        {QUESTIONS.map((q) => (
+          <div key={q.id}>
+            <label className="qa-label">{q.label}</label>
+            <input
+              className="input"
+              placeholder={q.ph}
+              maxLength={40}
+              value={answers[q.id] || ""}
+              onChange={(e) => setAnswer(q.id, e.target.value)}
+            />
+          </div>
+        ))}
 
         {error && <p className="error">{error}</p>}
         <button className="btn btn-primary" onClick={save} disabled={busy}>
