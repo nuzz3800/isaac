@@ -31,3 +31,11 @@ export async function deletePrayer(prayerId) {
 export async function togglePrayed(prayerId, memberId, on) {
   await set(ref(db, `prayers/${prayerId}/prayedBy/${memberId}`), on ? true : null);
 }
+
+// 🌱 응답됐어요 토글 (모임 모드의 '지난주 기도 돌아보기'에서 사용)
+export async function toggleAnswered(prayerId, on) {
+  await update(ref(db, `prayers/${prayerId}`), {
+    answered: on ? true : null,
+    answeredAt: on ? Date.now() : null,
+  });
+}
