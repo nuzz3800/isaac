@@ -846,6 +846,16 @@ a.panel:active {
   margin-top: 4px;
 }
 
+/* ── 누구일까요? 퀴즈 ── */
+.quote-card {
+  font-family: "Noto Serif KR", serif;
+  font-size: 21px;
+  font-weight: 700;
+  text-align: center;
+  padding: 26px 20px;
+  line-height: 1.5;
+}
+
 /* ── 프로필 문답 ── */
 .qna-head {
   margin-top: 14px;
