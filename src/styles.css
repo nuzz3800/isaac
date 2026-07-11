@@ -846,6 +846,24 @@ a.panel:active {
   margin-top: 4px;
 }
 
+/* ── 프로필 문답 ── */
+.qna-head {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hint-left {
+  text-align: left;
+}
+.qa-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sub);
+  margin-bottom: 5px;
+}
+
 /* ── 모임 모드 ── */
 .step-dots {
   display: flex;

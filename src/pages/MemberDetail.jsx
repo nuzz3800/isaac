@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { nextBirthday, cohortLabel } from "../dates";
+import { QUESTIONS } from "../questions";
 import MemberForm from "./MemberForm";
 
 export default function MemberDetail({ members, myId, onSwitchProfile }) {
@@ -80,6 +81,33 @@ export default function MemberDetail({ members, myId, onSwitchProfile }) {
           </div>
         ))}
       </div>
+
+      {(() => {
+        const answered = QUESTIONS.filter((q) => m.answers?.[q.id]);
+        if (answered.length === 0)
+          return (
+            isMe && (
+              <p className="hint" style={{ marginTop: 16 }}>
+                문답을 채우면 '누구일까요?' 퀴즈에 출제돼요 👀
+              </p>
+            )
+          );
+        return (
+          <>
+            <h2 className="section-title">
+              💬 {m.name}님의 문답 {answered.length}개
+            </h2>
+            <div className="stack">
+              {answered.map((q) => (
+                <div className="panel" key={q.id}>
+                  <span className="field-label">{q.label}</span>
+                  <b>{m.answers[q.id]}</b>
+                </div>
+              ))}
+            </div>
+          </>
+        );
+      })()}
 
       {isMe && (
         <div className="footer">

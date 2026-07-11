@@ -56,6 +56,12 @@
 ② 이번 주 기도제목 그 자리에서 작성(실시간 목록) → ③ 일정 확인+RSVP → ④ 놀이 & 마무리.
 종료 시 `meetingLog`에 요약 보관 (추후 '사랑방 역사' 재료).
 
+## 프로필 문답 & '누구일까요?' 퀴즈 (진행 중)
+
+- 문답 은행은 `src/questions.js` — id 변경/삭제 금지(기존 답변 고아됨), 추가는 자유
+- 문답이 곧 퀴즈 콘텐츠: "Q. {질문}에 '{답}'이라고 한 가원은?" 템플릿으로 자동 출제 예정
+- 다음 단계: 가원들이 문답을 채운 뒤 '누구일까요?' 퀴즈 게임을 놀이터에 추가 (별도 PR)
+
 ## 개발 워크플로우
 
 기능 개발은 **브랜치 + PR**로 진행 (main 직접 커밋 지양, 사용자 결정).
@@ -68,7 +74,8 @@
 ```
 config/passcode: string?              // 있으면 입장 암호 게이트 켜짐
 members/{memberId}: { name, emoji, birthMonth?, birthDay?, birthYear?,
-                      mbti?, oneLiner?, likes?, createdAt }
+                      mbti?, likes?, createdAt,
+                      answers?: { questionId: string } }  // 프로필 문답
 prayers/{prayerId}: { memberId, text, weekKey(일요일 ISO), createdAt,
                       prayedBy: { memberId: true },
                       answered?: true, answeredAt? }   // 🌱 모임 모드에서 체크
