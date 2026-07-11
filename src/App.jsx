@@ -141,7 +141,7 @@ function Shell() {
 const TABS = [
   ["/", "🏠", "홈"],
   ["/members", "👥", "가원"],
-  ["/prayers", "🙏", "기도"],
+  ["/prayers", "🙏", "기도", true], // 가운데 떠 있는 원형 버튼
   ["/events", "📅", "일정"],
   ["/play", "🎲", "놀이"],
 ];
@@ -149,17 +149,30 @@ const TABS = [
 function TabBar() {
   return (
     <nav className="tabbar">
-      {TABS.map(([to, icon, label]) => (
-        <NavLink
-          key={to}
-          to={to}
-          end={to === "/"}
-          className={({ isActive }) => `tab${isActive ? " active" : ""}`}
-        >
-          <span className="tab-icon">{icon}</span>
-          <span className="tab-label">{label}</span>
-        </NavLink>
-      ))}
+      {TABS.map(([to, icon, label, center]) =>
+        center ? (
+          <NavLink
+            key={to}
+            to={to}
+            aria-label={label}
+            className={({ isActive }) =>
+              `tab-center${isActive ? " active" : ""}`
+            }
+          >
+            {icon}
+          </NavLink>
+        ) : (
+          <NavLink
+            key={to}
+            to={to}
+            end={to === "/"}
+            className={({ isActive }) => `tab${isActive ? " active" : ""}`}
+          >
+            <span className="tab-icon">{icon}</span>
+            <span className="tab-label">{label}</span>
+          </NavLink>
+        )
+      )}
     </nav>
   );
 }

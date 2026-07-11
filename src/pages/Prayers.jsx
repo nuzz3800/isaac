@@ -11,6 +11,7 @@ import { BRAND } from "../branding";
 
 export default function Prayers({ members, myId }) {
   const prayers = usePrayers();
+  const [writing, setWriting] = useState(false);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -40,6 +41,7 @@ export default function Prayers({ members, myId }) {
     try {
       await addPrayer(myId, t);
       setText("");
+      setWriting(false);
     } finally {
       setBusy(false);
     }
@@ -61,22 +63,47 @@ export default function Prayers({ members, myId }) {
         {"\n"}🙏 버튼을 누르면 "함께 기도하고 있어요"라는 표시예요.
       </p>
 
-      <div className="stack">
-        <textarea
-          className="input textarea"
-          placeholder="이번 주 나의 기도제목을 적어주세요"
-          maxLength={200}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <button
-          className="btn btn-primary"
-          onClick={submit}
-          disabled={busy || !text.trim()}
-        >
-          이번 주 기도제목 올리기
-        </button>
-      </div>
+      {writing ? (
+        <div className="stack">
+          <textarea
+            className="input textarea"
+            placeholder="이번 주 나의 기도제목을 적어주세요"
+            maxLength={200}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            autoFocus
+          />
+          <div className="field-row">
+            <button
+              className="btn btn-ghost"
+              onClick={() => {
+                setWriting(false);
+                setText("");
+              }}
+            >
+              취소
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={submit}
+              disabled={busy || !text.trim()}
+            >
+              올리기
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="panel cream">
+          <b>이번 주, 마음에 어떤 기도가 있나요?</b>
+          <span className="member-sub">나누면 가원들이 함께 기도해줘요</span>
+          <button
+            className="btn btn-primary btn-compact"
+            onClick={() => setWriting(true)}
+          >
+            기도제목 적기 ✍️
+          </button>
+        </div>
+      )}
 
       {weeks.length === 0 && (
         <p className="hint" style={{ marginTop: 24 }}>
