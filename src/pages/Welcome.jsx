@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BRAND } from "../branding";
 import MemberForm from "./MemberForm";
+import ChurchLogo from "../Logo";
 
 // 첫 방문: 내 프로필을 고르거나 새로 만든다 (로그인 대신 신뢰 기반)
 export default function Welcome({ members, onPicked }) {
@@ -23,7 +24,9 @@ export default function Welcome({ members, onPicked }) {
     <div className="app center">
       <div className="hero">
         <p className="brand-eyebrow">{BRAND.church}</p>
-        <div className="hero-emoji">🏡</div>
+        <div className="hero-emoji">
+          <ChurchLogo size={64} />
+        </div>
         <h1 className="title">{BRAND.group}</h1>
         <p className="subtitle">
           {list.length > 0

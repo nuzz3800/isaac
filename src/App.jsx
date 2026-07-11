@@ -12,6 +12,7 @@ import { db, isConfigured } from "./firebase";
 import { getMyId, setMyId, clearMyId } from "./identity";
 import { useMembers } from "./api/members";
 import { BRAND } from "./branding";
+import ChurchLogo from "./Logo";
 import GameApp from "./game/GameApp";
 import Welcome from "./pages/Welcome";
 import Dashboard from "./pages/Dashboard";
@@ -24,11 +25,31 @@ import Play from "./pages/Play";
 const PASS_KEY = "joel-pass";
 
 export default function App() {
+  // 입장 시 로고 스플래시 — 페이지 로드마다 한 번, 짧게
+  const [splash, setSplash] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setSplash(false), 1700);
+    return () => clearTimeout(t);
+  }, []);
+
   if (!isConfigured) return <SetupNotice />;
   return (
     <BrowserRouter>
+      {splash && <SplashScreen />}
       <Shell />
     </BrowserRouter>
+  );
+}
+
+function SplashScreen() {
+  return (
+    <div className="splash-screen">
+      <div className="splash-logo">
+        <ChurchLogo size={84} />
+      </div>
+      <p className="splash-church">{BRAND.church}</p>
+      <h1 className="splash-group">{BRAND.group}</h1>
+    </div>
   );
 }
 
@@ -152,7 +173,9 @@ function Gate({ onPass, expected }) {
         <p className="brand-eyebrow">
           {BRAND.church} · {BRAND.group}
         </p>
-        <div className="hero-emoji">🚪</div>
+        <div className="hero-emoji">
+          <ChurchLogo size={56} />
+        </div>
         <h1 className="title">우리 사랑방 암호는?</h1>
         <p className="subtitle">가원들만 아는 그 암호를 입력해주세요</p>
       </div>

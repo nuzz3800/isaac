@@ -46,6 +46,22 @@ export function ddayLabel(iso) {
   return "지남";
 }
 
+// 동기 표기: 우리 사랑방은 "2001년생"이 아니라 "01동기"라고 부른다
+export function cohortLabel(birthYear) {
+  if (!birthYear) return null;
+  return `${String(birthYear).slice(-2).padStart(2, "0")}동기`;
+}
+
+// "01" / "2001" 둘 다 허용해서 네 자리 연도로
+export function parseCohortYear(input) {
+  const s = String(input).trim();
+  if (!/^\d{2}$|^\d{4}$/.test(s)) return null;
+  const n = Number(s);
+  if (s.length === 4) return n;
+  const currentYY = new Date().getFullYear() % 100;
+  return n <= currentYY ? 2000 + n : 1900 + n;
+}
+
 // 다음 생일까지 남은 날짜와 날짜 문자열
 export function nextBirthday(month, day) {
   const now = new Date(`${todayISO()}T00:00:00`);

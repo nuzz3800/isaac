@@ -6,7 +6,20 @@
 
 - 배포 주소: https://issac-1abff.web.app (Firebase 프로젝트 `issac-1abff`)
 - 사랑방 구성원은 **'가원'** 이라고 부름 — UI 문구에서 '참가자/멤버' 대신 사용
+- 출생 연도는 **'01동기' 형식**으로 표기 (2001년생 ❌) — `dates.js`의 `cohortLabel`/`parseCohortYear` 사용
+- 프로필에 '한 줄 소개' 없음 (사용자가 명시적으로 제외 요청)
 - 톤: 따뜻하고 장난기 있는 해요체
+
+## 디자인 언어 (사용자 제공 레퍼런스 기반 — 명상앱 무드)
+
+- 차분한 노을빛: 라벤더→피치→크림 그라데이션 배경, 코퍼(#c07a4e) 포인트, 다크 네이비(#2c3040)
+- 제목은 세리프(Noto Serif KR), 본문은 Noto Sans KR (index.html에서 Google Fonts 로드)
+- 카드: 흰색 `.panel`/`.card`, radius 20px, 테두리 대신 부드러운 그림자(`--shadow`)
+- 탭바: 하단 플로팅 다크 네이비 필(pill), 활성 탭 코퍼
+- 버튼: 필 형태(999px). primary=네이비, danger(강조 액션)=코퍼
+- 스플래시: 페이지 로드마다 로고+사랑방 이름 1.7초 (App.jsx의 SplashScreen)
+- 로고: `src/Logo.jsx` — 실제 로고의 **SVG 근사 재현** (핑크 #E4136B + 블루 #1E4396 십자 바람개비).
+  실제 로고 파일을 받으면 `public/logo.png`로 교체할 것
 
 ## 사이트 구조 (react-router, 하단 탭바)
 

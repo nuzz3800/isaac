@@ -1,16 +1,21 @@
+/* 디자인 언어: 차분한 노을빛 (레퍼런스: 명상앱 무드)
+   — 크림/라벤더 그라데이션 배경, 세리프 제목, 흰 라운드 카드 + 부드러운 그림자,
+     다크 네이비 플로팅 탭바, 코퍼(구리빛) 포인트 */
 :root {
-  --bg: #f6f3ee;
-  --card: #ffffff;
-  --ink: #2b2622;
-  --sub: #8a8177;
-  --accent: #e2582b;
-  --accent-dark: #c74a21;
-  --accent-soft: #fdeae2;
-  --green: #2e9e5b;
-  --green-soft: #e6f6ec;
-  --red: #d43d3d;
-  --red-soft: #fdeaea;
-  --line: #e7e0d6;
+  --bg: #f4efe9;
+  --card: #fffdfa;
+  --ink: #333140;
+  --sub: #948d95;
+  --navy: #2c3040;
+  --accent: #c07a4e;
+  --accent-dark: #a56238;
+  --accent-soft: #f6e6d9;
+  --green: #4c9d6f;
+  --green-soft: #e6f3ea;
+  --red: #cf5064;
+  --red-soft: #fbe7ea;
+  --line: #ece5dc;
+  --shadow: 0 8px 24px rgba(76, 60, 50, 0.08);
 }
 
 * {
@@ -22,15 +27,16 @@
 html,
 body,
 #root {
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
-  background: var(--bg);
+  background: linear-gradient(165deg, #f2ecf5 0%, #f9efe7 45%, #f4efe9 100%);
+  background-attachment: scroll;
   color: var(--ink);
-  font-family: "Pretendard", -apple-system, "Apple SD Gothic Neo",
-    "Noto Sans KR", sans-serif;
-  line-height: 1.5;
+  font-family: "Noto Sans KR", "Pretendard", -apple-system,
+    "Apple SD Gothic Neo", sans-serif;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -40,7 +46,7 @@ body {
   min-height: 100dvh; /* iOS Safari 주소창 대응 — 100vh 금지 */
   display: flex;
   flex-direction: column;
-  padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+  padding: 28px 20px calc(28px + env(safe-area-inset-bottom));
 }
 
 .app.center {
@@ -48,16 +54,77 @@ body {
   gap: 28px;
 }
 
+/* ── 스플래시 ── */
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(165deg, #f2ecf5 0%, #f9efe7 55%, #f4efe9 100%);
+  animation: splash-out 0.45s ease 1.25s forwards;
+}
+.splash-logo {
+  animation: splash-in 0.7s cubic-bezier(0.2, 0.8, 0.3, 1.15) both;
+  margin-bottom: 10px;
+}
+.splash-church {
+  color: var(--sub);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  animation: splash-rise 0.7s ease 0.3s both;
+}
+.splash-group {
+  font-family: "Noto Serif KR", serif;
+  font-size: 27px;
+  font-weight: 900;
+  animation: splash-rise 0.7s ease 0.4s both;
+}
+@keyframes splash-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-40deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes splash-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes splash-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 /* ── 타이포 ── */
 .hero {
   text-align: center;
 }
 .hero-emoji {
-  font-size: 64px;
+  font-size: 60px;
+  line-height: 1;
+  margin-bottom: 8px;
 }
 .title {
-  font-size: 24px;
-  font-weight: 800;
+  font-family: "Noto Serif KR", serif;
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
   margin-bottom: 6px;
 }
 .center .title {
@@ -66,15 +133,8 @@ body {
 .subtitle {
   color: var(--sub);
   font-size: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   white-space: pre-line; /* branding.js 문구의 \n 줄바꿈 지원 */
-}
-.brand-eyebrow {
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  margin-bottom: 10px;
 }
 .center .subtitle {
   text-align: center;
@@ -82,22 +142,30 @@ body {
 }
 .eyebrow {
   color: var(--sub);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
+}
+.brand-eyebrow {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
 }
 .section-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--sub);
-  margin: 20px 0 10px;
+  margin: 24px 0 10px;
 }
 .room-code {
+  font-family: "Noto Serif KR", serif;
   font-size: 56px;
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--accent);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 .splash {
   text-align: center;
@@ -115,17 +183,17 @@ body {
   text-align: center;
 }
 
-/* ── 버튼 ── */
+/* ── 버튼 (필 형태) ── */
 .btn {
   width: 100%;
-  min-height: 52px;
+  min-height: 54px;
   border: none;
-  border-radius: 14px;
-  font-size: 17px;
+  border-radius: 999px;
+  font-size: 16px;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: transform 0.05s, opacity 0.15s;
+  transition: transform 0.05s, opacity 0.15s, background 0.15s;
 }
 .btn:active {
   transform: scale(0.98);
@@ -135,36 +203,41 @@ body {
   cursor: default;
 }
 .btn-primary {
-  background: var(--accent);
-  color: #fff;
+  background: var(--navy);
+  color: #f6ede2;
+  box-shadow: var(--shadow);
 }
 .btn-primary:not(:disabled):hover {
-  background: var(--accent-dark);
+  background: #3a3f54;
 }
 .btn-danger {
-  background: var(--ink);
+  background: var(--accent);
   color: #fff;
+  box-shadow: var(--shadow);
+}
+.btn-danger:not(:disabled):hover {
+  background: var(--accent-dark);
 }
 .btn-ghost {
   background: transparent;
   color: var(--sub);
-  border: 2px solid var(--line);
+  border: 1.5px solid var(--line);
 }
 .btn-small {
   min-height: 40px;
   font-size: 14px;
   width: auto;
-  padding: 0 16px;
+  padding: 0 18px;
   align-self: center;
 }
 
 /* ── 입력 ── */
 .input {
   width: 100%;
-  min-height: 52px;
-  padding: 12px 16px;
-  border: 2px solid var(--line);
-  border-radius: 14px;
+  min-height: 54px;
+  padding: 13px 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
   font-size: 16px; /* iOS 자동 줌 방지: 16px 미만 금지 */
   font-family: inherit;
   background: var(--card);
@@ -180,6 +253,15 @@ body {
   font-weight: 800;
   letter-spacing: 0.3em;
 }
+select.input {
+  background: var(--card);
+}
+.textarea {
+  min-height: 88px;
+  resize: none;
+  font-family: inherit;
+  line-height: 1.5;
+}
 
 .stack {
   display: flex;
@@ -188,16 +270,16 @@ body {
   width: 100%;
 }
 
-/* ── 키워드 작성 ── */
+/* ── 키워드 작성 (거짓말게임) ── */
 .keyword-row {
   display: flex;
   gap: 8px;
 }
 .lie-toggle {
-  flex: 0 0 52px;
-  min-height: 52px;
-  border: 2px solid var(--line);
-  border-radius: 14px;
+  flex: 0 0 54px;
+  min-height: 54px;
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
   background: var(--card);
   font-size: 22px;
   cursor: pointer;
@@ -211,14 +293,15 @@ body {
   background: var(--red-soft);
 }
 
-/* ── 투표 카드 ── */
+/* ── 투표 카드 (거짓말게임) ── */
 .card {
   width: 100%;
-  min-height: 60px;
-  padding: 14px 16px;
-  border: 2px solid var(--line);
-  border-radius: 16px;
+  min-height: 62px;
+  padding: 15px 18px;
+  border: 1.5px solid transparent;
+  border-radius: 20px;
   background: var(--card);
+  box-shadow: var(--shadow);
   font-size: 17px;
   font-weight: 600;
   font-family: inherit;
@@ -243,8 +326,7 @@ body {
   background: var(--red-soft);
 }
 .card.truth {
-  border-color: var(--line);
-  opacity: 0.75;
+  opacity: 0.72;
 }
 .card-text {
   flex: 1;
@@ -270,9 +352,9 @@ body {
 .chip {
   font-size: 12px;
   font-weight: 600;
-  padding: 4px 10px;
+  padding: 4px 11px;
   border-radius: 999px;
-  background: var(--line);
+  background: rgba(44, 48, 64, 0.07);
   color: var(--ink);
 }
 .chip-correct {
@@ -297,15 +379,15 @@ body {
   justify-content: space-between;
   align-items: center;
   background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  padding: 12px 16px;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 13px 18px;
   font-size: 16px;
   font-weight: 600;
 }
 .player-row.winner {
-  border-color: var(--accent);
   background: var(--accent-soft);
+  border: 1.5px solid var(--accent);
 }
 .rank {
   display: inline-block;
@@ -317,27 +399,27 @@ body {
   color: var(--accent);
   background: var(--accent-soft);
   border-radius: 999px;
-  padding: 2px 8px;
+  padding: 2px 9px;
   margin-left: 6px;
 }
 
-/* ── 기타 ── */
+/* ── 기타 공용 ── */
 .qr-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
   background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 20px;
-  padding: 20px;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 22px;
 }
 .notice {
   margin-top: 16px;
   background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  padding: 14px 16px;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 15px 18px;
   font-size: 15px;
   font-weight: 600;
   text-align: center;
@@ -352,19 +434,20 @@ body {
 
 /* ── 사랑방 셸 (탭바 포함 레이아웃) ── */
 .shell .app {
-  padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  padding-bottom: calc(112px + env(safe-area-inset-bottom));
 }
 .tabbar {
   position: fixed;
-  bottom: 0;
+  bottom: calc(14px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
+  width: calc(100% - 28px);
+  max-width: 452px;
   display: flex;
-  background: var(--card);
-  border-top: 2px solid var(--line);
-  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+  background: var(--navy);
+  border-radius: 999px;
+  padding: 8px;
+  box-shadow: 0 14px 34px rgba(35, 32, 50, 0.32);
   z-index: 10;
 }
 .tab {
@@ -372,19 +455,20 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 6px 0;
+  gap: 1px;
+  padding: 7px 0 5px;
   text-decoration: none;
-  color: var(--sub);
-  font-size: 11px;
+  color: rgba(246, 237, 226, 0.5);
+  font-size: 10.5px;
   font-weight: 700;
-  border-radius: 12px;
+  border-radius: 999px;
 }
 .tab.active {
-  color: var(--accent);
+  color: #ecbd93;
+  background: rgba(255, 255, 255, 0.08);
 }
 .tab-icon {
-  font-size: 20px;
+  font-size: 19px;
 }
 
 /* ── 패널 (콘텐츠 카드) ── */
@@ -393,9 +477,9 @@ body {
   flex-direction: column;
   gap: 8px;
   background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  padding: 14px 16px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
   font-size: 15px;
   text-decoration: none;
   color: inherit;
@@ -404,20 +488,23 @@ a.panel:active {
   transform: scale(0.99);
 }
 .panel.highlight {
-  border-color: var(--accent);
-  background: var(--accent-soft);
+  background: linear-gradient(135deg, #fdf3e9, #f8e8dd);
+  border: 1.5px solid var(--accent);
 }
 .panel.past {
-  opacity: 0.65;
+  opacity: 0.6;
 }
 .panel.soon {
   opacity: 0.6;
+  box-shadow: none;
+  border: 1.5px dashed var(--line);
+  background: transparent;
 }
 
 .member-card {
   flex-direction: row;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
 }
 .member-info {
   display: flex;
@@ -428,9 +515,6 @@ a.panel:active {
 }
 .member-sub {
   color: var(--sub);
-  font-size: 13px;
-}
-.member-liner {
   font-size: 13px;
 }
 .avatar {
@@ -466,15 +550,6 @@ a.panel:active {
   flex: 1;
   min-width: 0;
 }
-.textarea {
-  min-height: 84px;
-  resize: none;
-  font-family: inherit;
-  line-height: 1.5;
-}
-select.input {
-  background: var(--card);
-}
 .emoji-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -482,10 +557,10 @@ select.input {
 }
 .emoji-cell {
   font-size: 22px;
-  padding: 8px 0;
+  padding: 9px 0;
   background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
   cursor: pointer;
 }
 .emoji-cell.active {
@@ -525,10 +600,10 @@ select.input {
 }
 .pray-btn {
   align-self: flex-start;
-  border: 2px solid var(--line);
+  border: 1.5px solid var(--line);
   background: var(--card);
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 7px 14px;
   font-size: 13px;
   font-weight: 700;
   color: var(--sub);
@@ -546,10 +621,10 @@ select.input {
 }
 .rsvp-btn {
   flex: 1;
-  border: 2px solid var(--line);
+  border: 1.5px solid var(--line);
   background: var(--card);
-  border-radius: 12px;
-  padding: 10px;
+  border-radius: 999px;
+  padding: 11px;
   font-size: 14px;
   font-weight: 700;
   font-family: inherit;
@@ -572,7 +647,7 @@ select.input {
   color: var(--accent);
   background: var(--accent-soft);
   border-radius: 999px;
-  padding: 3px 10px;
+  padding: 3px 11px;
   white-space: nowrap;
 }
 .back-link {

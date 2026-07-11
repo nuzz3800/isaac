@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { BRAND } from "../branding";
+import { cohortLabel } from "../dates";
 
 export default function Members({ members, myId }) {
   const list = Object.entries(members).sort((a, b) =>
@@ -15,6 +16,7 @@ export default function Members({ members, myId }) {
       <div className="stack">
         {list.map(([id, m]) => {
           const sub = [
+            cohortLabel(m.birthYear),
             m.mbti,
             m.birthMonth ? `${m.birthMonth}월 ${m.birthDay}일생` : null,
           ]
@@ -31,9 +33,6 @@ export default function Members({ members, myId }) {
                 <span className="member-sub">
                   {sub || "소개를 기다리는 중..."}
                 </span>
-                {m.oneLiner && (
-                  <span className="member-liner">“{m.oneLiner}”</span>
-                )}
               </span>
               <span className="chevron">›</span>
             </Link>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createMember, updateMember } from "../api/members";
+import { parseCohortYear } from "../dates";
 
 const EMOJIS = [
   "😀", "😎", "🥰", "🤗", "😇", "🤓",
@@ -19,9 +20,10 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
   const [emoji, setEmoji] = useState(initial?.emoji || "😀");
   const [birthMonth, setBirthMonth] = useState(initial?.birthMonth || "");
   const [birthDay, setBirthDay] = useState(initial?.birthDay || "");
-  const [birthYear, setBirthYear] = useState(initial?.birthYear || "");
+  const [cohort, setCohort] = useState(
+    initial?.birthYear ? String(initial.birthYear).slice(-2) : ""
+  );
   const [mbti, setMbti] = useState(initial?.mbti || "");
-  const [oneLiner, setOneLiner] = useState(initial?.oneLiner || "");
   const [likes, setLikes] = useState(initial?.likes || "");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -31,6 +33,8 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
     if (!trimmedName) return setError("이름을 입력해주세요.");
     if ((birthMonth && !birthDay) || (!birthMonth && birthDay))
       return setError("생일은 월과 일을 함께 골라주세요.");
+    if (cohort && !parseCohortYear(cohort))
+      return setError("동기는 01 또는 2001처럼 적어주세요.");
 
     setBusy(true);
     setError("");
@@ -39,9 +43,8 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
       emoji,
       birthMonth: birthMonth ? Number(birthMonth) : null,
       birthDay: birthDay ? Number(birthDay) : null,
-      birthYear: birthYear ? Number(birthYear) : null,
+      birthYear: cohort ? parseCohortYear(cohort) : null,
       mbti: mbti || null,
-      oneLiner: oneLiner.trim() || null,
       likes: likes.trim() || null,
     };
     try {
@@ -86,6 +89,16 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
           onChange={(e) => setName(e.target.value)}
         />
 
+        <label className="field-label">동기</label>
+        <input
+          className="input"
+          placeholder="예: 01 (01동기로 표시돼요)"
+          inputMode="numeric"
+          maxLength={4}
+          value={cohort}
+          onChange={(e) => setCohort(e.target.value.replace(/\D/g, ""))}
+        />
+
         <label className="field-label">생일</label>
         <div className="field-row">
           <select
@@ -112,14 +125,6 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
               </option>
             ))}
           </select>
-          <input
-            className="input"
-            placeholder="년도 (선택)"
-            inputMode="numeric"
-            maxLength={4}
-            value={birthYear}
-            onChange={(e) => setBirthYear(e.target.value.replace(/\D/g, ""))}
-          />
         </div>
 
         <label className="field-label">MBTI</label>
@@ -135,15 +140,6 @@ export default function MemberForm({ title, initial, memberId, onSaved, onCancel
             </option>
           ))}
         </select>
-
-        <label className="field-label">한 줄 소개</label>
-        <input
-          className="input"
-          placeholder="예: 웃음이 많은 사람이에요"
-          maxLength={40}
-          value={oneLiner}
-          onChange={(e) => setOneLiner(e.target.value)}
-        />
 
         <label className="field-label">좋아하는 것들</label>
         <input

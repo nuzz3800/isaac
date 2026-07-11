@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { nextBirthday } from "../dates";
+import { nextBirthday, cohortLabel } from "../dates";
 import MemberForm from "./MemberForm";
 
 export default function MemberDetail({ members, myId, onSwitchProfile }) {
@@ -35,10 +35,11 @@ export default function MemberDetail({ members, myId, onSwitchProfile }) {
     : null;
 
   const rows = [
+    ["🎓 동기", cohortLabel(m.birthYear)],
     [
       "🎂 생일",
       m.birthMonth
-        ? `${m.birthYear ? `${m.birthYear}년 ` : ""}${m.birthMonth}월 ${m.birthDay}일` +
+        ? `${m.birthMonth}월 ${m.birthDay}일` +
           (birthday.days === 0
             ? " — 오늘이 생일! 🎉"
             : birthday.days <= 30
@@ -62,7 +63,6 @@ export default function MemberDetail({ members, myId, onSwitchProfile }) {
           {m.name}
           {isMe && <span className="tag">나</span>}
         </h1>
-        {m.oneLiner && <p className="subtitle">“{m.oneLiner}”</p>}
       </div>
 
       <div className="stack">
