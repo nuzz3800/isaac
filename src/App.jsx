@@ -1,89 +1,181 @@
 import { useEffect, useState } from "react";
-import { ref, get, onValue } from "firebase/database";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  NavLink,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import { ref, get } from "firebase/database";
 import { db, isConfigured } from "./firebase";
-import { loadSession, clearSession } from "./game";
-import Home from "./components/Home";
-import Lobby from "./components/Lobby";
-import Writing from "./components/Writing";
-import Voting from "./components/Voting";
-import Result from "./components/Result";
+import { getMyId, setMyId, clearMyId } from "./identity";
+import { useMembers } from "./api/members";
+import { BRAND } from "./branding";
+import GameApp from "./game/GameApp";
+import Welcome from "./pages/Welcome";
+import Dashboard from "./pages/Dashboard";
+import Members from "./pages/Members";
+import MemberDetail from "./pages/MemberDetail";
+import Prayers from "./pages/Prayers";
+import Events from "./pages/Events";
+import Play from "./pages/Play";
+
+const PASS_KEY = "joel-pass";
 
 export default function App() {
-  const [session, setSession] = useState(null); // { roomCode, playerId }
-  const [room, setRoom] = useState(null);
-  const [checking, setChecking] = useState(true);
-  const urlRoom = new URLSearchParams(window.location.search).get("room");
+  if (!isConfigured) return <SetupNotice />;
+  return (
+    <BrowserRouter>
+      <Shell />
+    </BrowserRouter>
+  );
+}
 
-  // 접속 시 저장된 세션이 살아있으면 같은 플레이어로 자동 복귀
+function Shell() {
+  const location = useLocation();
+  const members = useMembers();
+  const [myId, setMyIdState] = useState(getMyId());
+  // 입장 암호: DB의 config/passcode가 설정돼 있을 때만 작동 (없으면 그냥 통과)
+  const [gate, setGate] = useState("loading"); // loading | open | locked
+  const [expected, setExpected] = useState("");
+
   useEffect(() => {
-    if (!isConfigured) {
-      setChecking(false);
-      return;
-    }
-    (async () => {
-      const saved = loadSession();
-      if (saved && (!urlRoom || urlRoom === saved.roomCode)) {
-        try {
-          const snap = await get(
-            ref(db, `rooms/${saved.roomCode}/players/${saved.playerId}`)
-          );
-          if (snap.exists()) {
-            setSession(saved);
-            setChecking(false);
-            return;
-          }
-        } catch {
-          // 네트워크 오류 등 — 홈으로
+    get(ref(db, "config/passcode"))
+      .then((s) => {
+        const v = s.val();
+        if (!v || localStorage.getItem(PASS_KEY) === String(v)) {
+          setGate("open");
+        } else {
+          setExpected(String(v));
+          setGate("locked");
         }
-        clearSession();
-      }
-      setChecking(false);
-    })();
+      })
+      .catch(() => setGate("open"));
   }, []);
 
-  useEffect(() => {
-    if (!session) {
-      setRoom(null);
-      return;
-    }
-    return onValue(ref(db, `rooms/${session.roomCode}`), (snap) =>
-      setRoom(snap.val())
-    );
-  }, [session]);
+  // 거짓말게임은 게이트/프로필 없이 접근 가능 (QR로 들어오는 손님용)
+  if (location.pathname.startsWith("/game")) return <GameApp />;
 
-  function leave() {
-    clearSession();
-    setSession(null);
-    setRoom(null);
-    window.history.replaceState(null, "", window.location.pathname);
-  }
+  // 옛 QR 링크 호환: /?room=1234 → /game?room=1234
+  if (
+    location.pathname === "/" &&
+    new URLSearchParams(location.search).get("room")
+  )
+    return <Navigate to={`/game${location.search}`} replace />;
 
-  if (!isConfigured) return <SetupNotice />;
-  if (checking) return <Splash text="접속 확인 중..." />;
-  if (!session) return <Home urlRoom={urlRoom} onEnter={setSession} />;
-  if (!room)
+  if (gate === "loading" || members === null)
+    return <Splash text="사랑방 문 여는 중..." />;
+  if (gate === "locked")
     return (
-      <div className="app center">
-        <p className="splash">방 정보를 불러오는 중...</p>
-        <button className="btn btn-ghost" onClick={leave}>
-          처음으로
+      <Gate
+        expected={expected}
+        onPass={() => {
+          localStorage.setItem(PASS_KEY, expected);
+          setGate("open");
+        }}
+      />
+    );
+
+  const me = myId ? members[myId] : null;
+  if (!me)
+    return (
+      <Welcome
+        members={members}
+        onPicked={(id) => {
+          setMyId(id);
+          setMyIdState(id);
+        }}
+      />
+    );
+
+  const props = { members, myId, me };
+  return (
+    <div className="shell">
+      <Routes>
+        <Route path="/" element={<Dashboard {...props} />} />
+        <Route path="/members" element={<Members {...props} />} />
+        <Route
+          path="/members/:id"
+          element={
+            <MemberDetail
+              {...props}
+              onSwitchProfile={() => {
+                clearMyId();
+                setMyIdState(null);
+              }}
+            />
+          }
+        />
+        <Route path="/prayers" element={<Prayers {...props} />} />
+        <Route path="/events" element={<Events {...props} />} />
+        <Route path="/play" element={<Play />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <TabBar />
+    </div>
+  );
+}
+
+const TABS = [
+  ["/", "🏠", "홈"],
+  ["/members", "👥", "가원"],
+  ["/prayers", "🙏", "기도"],
+  ["/events", "📅", "일정"],
+  ["/play", "🎲", "놀이"],
+];
+
+function TabBar() {
+  return (
+    <nav className="tabbar">
+      {TABS.map(([to, icon, label]) => (
+        <NavLink
+          key={to}
+          to={to}
+          end={to === "/"}
+          className={({ isActive }) => `tab${isActive ? " active" : ""}`}
+        >
+          <span className="tab-icon">{icon}</span>
+          <span className="tab-label">{label}</span>
+        </NavLink>
+      ))}
+    </nav>
+  );
+}
+
+function Gate({ onPass, expected }) {
+  const [input, setInput] = useState("");
+  const [error, setError] = useState("");
+  return (
+    <div className="app center">
+      <div className="hero">
+        <p className="brand-eyebrow">
+          {BRAND.church} · {BRAND.group}
+        </p>
+        <div className="hero-emoji">🚪</div>
+        <h1 className="title">우리 사랑방 암호는?</h1>
+        <p className="subtitle">가원들만 아는 그 암호를 입력해주세요</p>
+      </div>
+      <div className="stack">
+        <input
+          className="input input-code"
+          placeholder="암호"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && check()}
+        />
+        {error && <p className="error">{error}</p>}
+        <button className="btn btn-primary" onClick={check}>
+          입장
         </button>
       </div>
-    );
+    </div>
+  );
 
-  const props = {
-    room,
-    roomCode: session.roomCode,
-    playerId: session.playerId,
-    onLeave: leave,
-  };
-
-  if (room.status === "lobby") return <Lobby {...props} />;
-  if (room.status === "writing") return <Writing {...props} />;
-  if (room.status === "playing")
-    return <Voting key={room.currentTurnIndex} {...props} />;
-  if (room.status === "done") return <Result {...props} />;
-  return <Splash text="..." />;
+  function check() {
+    if (input.trim() === expected) onPass();
+    else setError("음... 그 암호가 아니에요 🤔");
+  }
 }
 
 function Splash({ text }) {
@@ -103,7 +195,6 @@ function SetupNotice() {
           <code>src/firebase.js</code>의 <code>firebaseConfig</code>를 Firebase
           콘솔에서 받은 값으로 바꿔주세요.
         </p>
-        <p>자세한 순서는 README.md에 있어요.</p>
       </div>
     </div>
   );

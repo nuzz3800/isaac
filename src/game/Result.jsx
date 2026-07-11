@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { playAgain } from "../game";
+import { playAgain } from "./game";
 import { BRAND } from "../branding";
 
 const MEDALS = ["🥇", "🥈", "🥉"];

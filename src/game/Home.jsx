@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { createRoom, joinRoom } from "../game";
+import { Link } from "react-router-dom";
+import { createRoom, joinRoom } from "./game";
 import { BRAND } from "../branding";
 
 export default function Home({ urlRoom, onEnter }) {
@@ -50,7 +51,9 @@ export default function Home({ urlRoom, onEnter }) {
             방 코드로 참여하기
           </button>
         </div>
-        <p className="hint">{BRAND.homeFooter}</p>
+        <Link to="/" className="hint back-link">
+          ← 사랑방 홈으로
+        </Link>
       </div>
     );
   }

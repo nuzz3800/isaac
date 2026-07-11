@@ -1,5 +1,5 @@
 import { ref, get, set, update, push, child } from "firebase/database";
-import { db } from "./firebase";
+import { db } from "../firebase";
 
 // ── 세션 (새로고침/화면잠금 후 같은 플레이어로 복귀하는 핵심 장치) ──
 const SESSION_KEY = "liar-intro-session";

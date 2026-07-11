@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { submitKeywords, startPlaying } from "../game";
+import { submitKeywords, startPlaying } from "./game";
 
 const FIELD_COUNT = 6;
 const MIN_KEYWORDS = 4;

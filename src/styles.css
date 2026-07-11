@@ -349,3 +349,235 @@ body {
   flex-direction: column;
   gap: 10px;
 }
+
+/* ── 사랑방 셸 (탭바 포함 레이아웃) ── */
+.shell .app {
+  padding-bottom: calc(92px + env(safe-area-inset-bottom));
+}
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  background: var(--card);
+  border-top: 2px solid var(--line);
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+  z-index: 10;
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 0;
+  text-decoration: none;
+  color: var(--sub);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 12px;
+}
+.tab.active {
+  color: var(--accent);
+}
+.tab-icon {
+  font-size: 20px;
+}
+
+/* ── 패널 (콘텐츠 카드) ── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 15px;
+  text-decoration: none;
+  color: inherit;
+}
+a.panel:active {
+  transform: scale(0.99);
+}
+.panel.highlight {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.panel.past {
+  opacity: 0.65;
+}
+.panel.soon {
+  opacity: 0.6;
+}
+
+.member-card {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+.member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.member-sub {
+  color: var(--sub);
+  font-size: 13px;
+}
+.member-liner {
+  font-size: 13px;
+}
+.avatar {
+  font-size: 28px;
+}
+.avatar-big {
+  font-size: 56px;
+}
+.chevron {
+  color: var(--sub);
+  font-size: 22px;
+}
+.profile-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* ── 폼 요소 확장 ── */
+.field-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sub);
+}
+.field-row {
+  display: flex;
+  gap: 8px;
+}
+.field-row > * {
+  flex: 1;
+  min-width: 0;
+}
+.textarea {
+  min-height: 84px;
+  resize: none;
+  font-family: inherit;
+  line-height: 1.5;
+}
+select.input {
+  background: var(--card);
+}
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+.emoji-cell {
+  font-size: 22px;
+  padding: 8px 0;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.emoji-cell.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* ── 작은 액션들 ── */
+.text-btn {
+  background: none;
+  border: none;
+  color: var(--sub);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.text-btn.danger {
+  color: var(--red);
+}
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.prayer-text {
+  font-size: 15px;
+  white-space: pre-wrap;
+}
+.preview-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 55%;
+}
+.pray-btn {
+  align-self: flex-start;
+  border: 2px solid var(--line);
+  background: var(--card);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sub);
+  cursor: pointer;
+  font-family: inherit;
+}
+.pray-btn.active {
+  border-color: var(--green);
+  background: var(--green-soft);
+  color: var(--green);
+}
+.rsvp-row {
+  display: flex;
+  gap: 8px;
+}
+.rsvp-btn {
+  flex: 1;
+  border: 2px solid var(--line);
+  background: var(--card);
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--sub);
+  cursor: pointer;
+}
+.rsvp-btn.on {
+  border-color: var(--green);
+  background: var(--green-soft);
+  color: var(--green);
+}
+.rsvp-btn.on.no {
+  border-color: var(--red);
+  background: var(--red-soft);
+  color: var(--red);
+}
+.dday-chip {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.back-link {
+  text-decoration: none;
+  display: inline-block;
+  text-align: left;
+  margin-bottom: 12px;
+}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { castVote, revealAnswer, nextTurn, tallyTurn } from "../game";
+import { castVote, revealAnswer, nextTurn, tallyTurn } from "./game";
 
 export default function Voting({ room, roomCode, playerId }) {
   const targetId = room.turnOrder?.[room.currentTurnIndex];
@@ -118,9 +118,7 @@ export default function Voting({ room, roomCode, playerId }) {
                     >
                       {room.players[id]?.nickname}
                       {i === target.lieIndex && " +1"}
-                      {votes[id]?.comment && (
-                        <em> “{votes[id].comment}”</em>
-                      )}
+                      {votes[id]?.comment && <em> “{votes[id].comment}”</em>}
                     </span>
                   ))}
                 </div>
@@ -137,8 +135,7 @@ export default function Voting({ room, roomCode, playerId }) {
             : totalVoted > 0
               ? "아무도 못 맞췄어요! 완벽한 연기 👏"
               : "투표한 사람이 없었어요."}
-          {presenterBonus &&
-            ` 과반이 속아서 ${target.nickname}님 +2점!`}
+          {presenterBonus && ` 과반이 속아서 ${target.nickname}님 +2점!`}
         </div>
       )}
 
@@ -173,9 +170,7 @@ export default function Voting({ room, roomCode, playerId }) {
           </button>
         )}
         {canVote && myVote && (selected == null || selected === myVote.index) && (
-          <p className="hint">
-            투표 완료! 다른 카드를 누르면 바꿀 수 있어요.
-          </p>
+          <p className="hint">투표 완료! 다른 카드를 누르면 바꿀 수 있어요.</p>
         )}
 
         {isHost && !revealed && (

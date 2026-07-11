@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { startWriting } from "../game";
+import { startWriting } from "./game";
 import { BRAND } from "../branding";
 
 export default function Lobby({ room, roomCode, playerId, onLeave }) {
