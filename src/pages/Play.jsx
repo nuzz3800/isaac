@@ -20,12 +20,23 @@ export default function Play() {
           <span className="chevron">›</span>
         </Link>
 
+        <Link to="/quiz" className="panel member-card">
+          <span className="avatar">👤</span>
+          <span className="member-info">
+            <b>누구일까요?</b>
+            <span className="member-sub">
+              가원들의 문답으로 만든 진짜 퀴즈 · 문답이 쌓일수록 풍성해져요
+            </span>
+          </span>
+          <span className="chevron">›</span>
+        </Link>
+
         <div className="panel member-card soon">
           <span className="avatar">💡</span>
           <span className="member-info">
             <b>다음 콘텐츠 준비 중</b>
             <span className="member-sub">
-              밸런스 게임, 이상형 월드컵... 아이디어를 들려주세요!
+              본인을 맞혀라, 텔레파시, 밸런스 게임이 대기 중!
             </span>
           </span>
         </div>
