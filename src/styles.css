@@ -1,0 +1,351 @@
+:root {
+  --bg: #f6f3ee;
+  --card: #ffffff;
+  --ink: #2b2622;
+  --sub: #8a8177;
+  --accent: #e2582b;
+  --accent-dark: #c74a21;
+  --accent-soft: #fdeae2;
+  --green: #2e9e5b;
+  --green-soft: #e6f6ec;
+  --red: #d43d3d;
+  --red-soft: #fdeaea;
+  --line: #e7e0d6;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Pretendard", -apple-system, "Apple SD Gothic Neo",
+    "Noto Sans KR", sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh; /* iOS Safari 주소창 대응 — 100vh 금지 */
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+}
+
+.app.center {
+  justify-content: center;
+  gap: 28px;
+}
+
+/* ── 타이포 ── */
+.hero {
+  text-align: center;
+}
+.hero-emoji {
+  font-size: 64px;
+}
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.center .title {
+  text-align: center;
+}
+.subtitle {
+  color: var(--sub);
+  font-size: 15px;
+  margin-bottom: 20px;
+  white-space: pre-line; /* branding.js 문구의 \n 줄바꿈 지원 */
+}
+.brand-eyebrow {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+.center .subtitle {
+  text-align: center;
+  margin-bottom: 0;
+}
+.eyebrow {
+  color: var(--sub);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sub);
+  margin: 20px 0 10px;
+}
+.room-code {
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.splash {
+  text-align: center;
+  color: var(--sub);
+  font-size: 16px;
+}
+.hint {
+  color: var(--sub);
+  font-size: 13px;
+  text-align: center;
+}
+.error {
+  color: var(--red);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ── 버튼 ── */
+.btn {
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.05s, opacity 0.15s;
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:not(:disabled):hover {
+  background: var(--accent-dark);
+}
+.btn-danger {
+  background: var(--ink);
+  color: #fff;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--sub);
+  border: 2px solid var(--line);
+}
+.btn-small {
+  min-height: 40px;
+  font-size: 14px;
+  width: auto;
+  padding: 0 16px;
+  align-self: center;
+}
+
+/* ── 입력 ── */
+.input {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  font-size: 16px; /* iOS 자동 줌 방지: 16px 미만 금지 */
+  font-family: inherit;
+  background: var(--card);
+  color: var(--ink);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.input-code {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* ── 키워드 작성 ── */
+.keyword-row {
+  display: flex;
+  gap: 8px;
+}
+.lie-toggle {
+  flex: 0 0 52px;
+  min-height: 52px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  font-size: 22px;
+  cursor: pointer;
+}
+.lie-toggle:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.lie-toggle.active {
+  border-color: var(--red);
+  background: var(--red-soft);
+}
+
+/* ── 투표 카드 ── */
+.card {
+  width: 100%;
+  min-height: 60px;
+  padding: 14px 16px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  font-size: 17px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+.card:disabled {
+  cursor: default;
+}
+.card.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.card.lie {
+  border-color: var(--red);
+  background: var(--red-soft);
+}
+.card.truth {
+  border-color: var(--line);
+  opacity: 0.75;
+}
+.card-text {
+  flex: 1;
+}
+.card-mark {
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.card.lie .card-mark {
+  color: var(--red);
+}
+.card.truth .card-mark {
+  color: var(--green);
+}
+
+.voter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 4px 2px;
+}
+.chip {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--line);
+  color: var(--ink);
+}
+.chip-correct {
+  background: var(--green-soft);
+  color: var(--green);
+}
+.chip em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--sub);
+}
+
+/* ── 목록 ── */
+.player-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.player-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.player-row.winner {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.rank {
+  display: inline-block;
+  min-width: 32px;
+}
+.tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-left: 6px;
+}
+
+/* ── 기타 ── */
+.qr-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  padding: 20px;
+}
+.notice {
+  margin-top: 16px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+.footer {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
