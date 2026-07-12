@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { ref, set, onValue } from "firebase/database";
+import { ref, update, remove, push, set, onValue } from "firebase/database";
 import { db } from "../firebase";
 
-// 목표 빙고 — 반기마다 가원별 3x3 목표판.
-// bingo/{periodKey}/{memberId}/{cellIndex 0~8}: { text, done?: true, doneAt? }
+// 목표 빙고 — 반기마다 사랑방 **공동** 3x3 목표판 (개인별 아님).
+// bingo/{periodKey}/cells/{0~8}: { text, targetDate?(ISO), done?, doneAt?,
+//                                  comments/{id}: { memberId, text, createdAt } }
 // periodKey는 "2026H2" 형식이라 내년/상반기로 자연 확장됨.
 
 export function currentPeriod(date = new Date()) {
@@ -14,23 +15,43 @@ export function periodLabel(period) {
   return `${period.slice(0, 4)} ${period.endsWith("H1") ? "상반기" : "하반기"}`;
 }
 
-export function useBingo(period) {
-  const [boards, setBoards] = useState(null); // null = 로딩
+export function useBingoBoard(period) {
+  const [board, setBoard] = useState(null); // null = 로딩
   useEffect(
-    () => onValue(ref(db, `bingo/${period}`), (s) => setBoards(s.val() || {})),
+    () =>
+      onValue(ref(db, `bingo/${period}/cells`), (s) => setBoard(s.val() || {})),
     [period]
   );
-  return boards;
+  return board;
 }
 
-// text가 비면 칸 삭제
-export async function saveBingoCell(period, memberId, index, text, done) {
-  await set(
-    ref(db, `bingo/${period}/${memberId}/${index}`),
-    text
-      ? { text, done: done ? true : null, doneAt: done ? Date.now() : null }
-      : null
-  );
+// update를 쓰는 이유: set이면 칸에 달린 댓글까지 날아감
+export async function saveBingoCell(period, index, { text, targetDate }) {
+  await update(ref(db, `bingo/${period}/cells/${index}`), {
+    text,
+    targetDate: targetDate || null,
+  });
+}
+
+export async function toggleBingoDone(period, index, on) {
+  await update(ref(db, `bingo/${period}/cells/${index}`), {
+    done: on ? true : null,
+    doneAt: on ? Date.now() : null,
+  });
+}
+
+// 목표+댓글 전부 삭제
+export async function clearBingoCell(period, index) {
+  await remove(ref(db, `bingo/${period}/cells/${index}`));
+}
+
+export async function addBingoComment(period, index, memberId, text) {
+  const r = push(ref(db, `bingo/${period}/cells/${index}/comments`));
+  await set(r, { memberId, text, createdAt: Date.now() });
+}
+
+export async function deleteBingoComment(period, index, commentId) {
+  await remove(ref(db, `bingo/${period}/cells/${index}/comments/${commentId}`));
 }
 
 const LINES = [

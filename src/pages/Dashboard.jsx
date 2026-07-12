@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import { usePrayers } from "../api/prayers";
 import { useEvents } from "../api/events";
-import { useBingo, currentPeriod, boardStats, periodLabel } from "../api/bingo";
+import {
+  useBingoBoard,
+  currentPeriod,
+  boardStats,
+  periodLabel,
+} from "../api/bingo";
 import {
   todayISO,
   formatDate,
@@ -12,12 +17,11 @@ import {
 } from "../dates";
 import ChurchLogo from "../Logo";
 
-export default function Dashboard({ me, members, myId, onSwitchProfile }) {
+export default function Dashboard({ me, members, onSwitchProfile }) {
   const prayers = usePrayers();
   const events = useEvents();
   const period = currentPeriod();
-  const boards = useBingo(period);
-  const myBingo = boardStats(boards?.[myId] || {});
+  const bingo = boardStats(useBingoBoard(period) || {});
   const today = todayISO();
 
   const hour = new Date().getHours();
@@ -181,19 +185,19 @@ export default function Dashboard({ me, members, myId, onSwitchProfile }) {
         </Link>
       </div>
       <Link to="/bingo" className="panel cream">
-        {myBingo.filled === 0 ? (
+        {bingo.filled === 0 ? (
           <>
-            <b>🏖 올해 남은 반년, 목표 9개를 채워봐요</b>
+            <b>🏖 우리 사랑방의 공동 목표 9가지</b>
             <span className="member-sub">
-              이루면 초록 스티커를 붙이는 재미!
+              함께 정하고, 이루면 초록 스티커를 붙여요!
             </span>
           </>
         ) : (
           <>
-            <b>🏖 내 빙고판</b>
+            <b>🏖 우리의 목표판</b>
             <span className="member-sub">
-              목표 {myBingo.filled}/9 · 달성 {myBingo.doneCount}개 · 빙고{" "}
-              {myBingo.lines}줄
+              목표 {bingo.filled}/9 · 달성 {bingo.doneCount}개 · 빙고{" "}
+              {bingo.lines}줄
             </span>
           </>
         )}
