@@ -13,7 +13,9 @@
 ## 디자인 언어 (사용자 제공 레퍼런스 기반 — 명상앱 무드)
 
 - 차분한 노을빛: 라벤더→피치→크림 그라데이션 배경, 코퍼(#c07a4e) 포인트, 다크 네이비(#2c3040)
-- 제목은 세리프(Noto Serif KR), 본문은 Noto Sans KR (index.html에서 Google Fonts 로드)
+- 타이포 (사용자 선택): 제목·버튼·탭·섹션헤더는 **쿠키런체**(CookieRun, 눈누 CDN woff
+  400/700/900 — styles.css 상단 @font-face), 본문은 Noto Sans KR (Google Fonts).
+  쿠키런 라이선스: 게임 분야 외 무료. 긴 본문엔 쿠키런 쓰지 말 것(가독성)
 - 카드: 흰색 `.panel`/`.card`, radius 20px, 테두리 대신 부드러운 그림자(`--shadow`)
 - 탭바: 하단 플로팅 다크 네이비 필(pill), 활성 탭 코퍼
 - 버튼: 필 형태(999px). primary=네이비, danger(강조 액션)=코퍼

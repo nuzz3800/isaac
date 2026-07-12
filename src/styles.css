@@ -1,6 +1,30 @@
 /* 디자인 언어: 차분한 노을빛 (레퍼런스: 명상앱 무드)
-   — 크림/라벤더 그라데이션 배경, 세리프 제목, 흰 라운드 카드 + 부드러운 그림자,
-     다크 네이비 플로팅 탭바, 코퍼(구리빛) 포인트 */
+   — 크림/라벤더 그라데이션 배경, 흰 라운드 카드 + 부드러운 그림자,
+     다크 네이비 플로팅 탭바, 코퍼(구리빛) 포인트
+   타이포: 제목·버튼·탭은 쿠키런체(사용자 선택), 본문은 Noto Sans KR */
+
+/* 쿠키런체 — 눈누 CDN. 게임 분야 외 무료 (데브시스터즈) */
+@font-face {
+  font-family: "CookieRun";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff")
+    format("woff");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "CookieRun";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/CookieRunOTF-Bold00.woff")
+    format("woff");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "CookieRun";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/CookieRunOTF-Black00.woff")
+    format("woff");
+  font-weight: 900;
+  font-display: swap;
+}
 :root {
   --bg: #f4efe9;
   --card: #fffdfa;
@@ -79,8 +103,8 @@ body {
   animation: splash-rise 0.7s ease 0.3s both;
 }
 .splash-group {
-  font-family: "Noto Serif KR", serif;
-  font-size: 27px;
+  font-family: "CookieRun", sans-serif;
+  font-size: 26px;
   font-weight: 900;
   animation: splash-rise 0.7s ease 0.4s both;
 }
@@ -121,8 +145,8 @@ body {
   margin-bottom: 8px;
 }
 .title {
-  font-family: "Noto Serif KR", serif;
-  font-size: 25px;
+  font-family: "CookieRun", "Noto Sans KR", sans-serif;
+  font-size: 24px;
   font-weight: 900;
   letter-spacing: -0.01em;
   margin-bottom: 6px;
@@ -160,7 +184,7 @@ body {
   margin: 24px 0 10px;
 }
 .room-code {
-  font-family: "Noto Serif KR", serif;
+  font-family: "CookieRun", sans-serif;
   font-size: 56px;
   font-weight: 900;
   letter-spacing: 0.1em;
@@ -191,7 +215,7 @@ body {
   border-radius: 999px;
   font-size: 16px;
   font-weight: 700;
-  font-family: inherit;
+  font-family: "CookieRun", "Noto Sans KR", sans-serif;
   cursor: pointer;
   transition: transform 0.05s, opacity 0.15s, background 0.15s;
 }
@@ -459,6 +483,7 @@ select.input {
   padding: 7px 0 5px;
   text-decoration: none;
   color: rgba(246, 237, 226, 0.5);
+  font-family: "CookieRun", "Noto Sans KR", sans-serif;
   font-size: 10.5px;
   font-weight: 700;
   border-radius: 999px;
@@ -719,17 +744,17 @@ a.panel:active {
   color: var(--ink);
 }
 .dash-eyebrow {
-  font-family: "Noto Serif KR", serif;
+  font-family: "CookieRun", sans-serif;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   color: #8b7d74;
   margin-bottom: 6px;
 }
 .dash-title {
-  font-family: "Noto Serif KR", serif;
-  font-size: 31px;
+  font-family: "CookieRun", sans-serif;
+  font-size: 28px;
   font-weight: 900;
-  line-height: 1.32;
+  line-height: 1.38;
   letter-spacing: -0.01em;
   white-space: pre-line;
   margin-bottom: 26px;
@@ -788,8 +813,9 @@ a.panel:active {
   margin: 26px 0 10px;
 }
 .section-row h2 {
-  font-size: 16px;
-  font-weight: 800;
+  font-family: "CookieRun", "Noto Sans KR", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
 }
 .view-all {
   font-size: 12.5px;
@@ -848,8 +874,8 @@ a.panel:active {
 
 /* ── 누구일까요? 퀴즈 ── */
 .quote-card {
-  font-family: "Noto Serif KR", serif;
-  font-size: 21px;
+  font-family: "CookieRun", sans-serif;
+  font-size: 20px;
   font-weight: 700;
   text-align: center;
   padding: 26px 20px;
