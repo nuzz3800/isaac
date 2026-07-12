@@ -22,6 +22,7 @@ import Prayers from "./pages/Prayers";
 import Events from "./pages/Events";
 import Play from "./pages/Play";
 import Quiz from "./pages/Quiz";
+import Bingo from "./pages/Bingo";
 
 const PASS_KEY = "joel-pass";
 
@@ -130,6 +131,7 @@ function Shell() {
         <Route path="/events" element={<Events {...props} />} />
         <Route path="/play" element={<Play />} />
         <Route path="/quiz" element={<Quiz {...props} />} />
+        <Route path="/bingo" element={<Bingo {...props} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <TabBar />
