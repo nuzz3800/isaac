@@ -254,6 +254,10 @@ body {
   padding: 0 18px;
   align-self: center;
 }
+.btn-delete {
+  color: var(--red);
+  border-color: #f4d5da;
+}
 
 /* ── 입력 ── */
 .input {

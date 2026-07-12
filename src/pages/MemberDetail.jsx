@@ -1,14 +1,34 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { deleteMember } from "../api/members";
 import { nextBirthday, cohortLabel } from "../dates";
 import { QUESTIONS } from "../questions";
 import MemberForm from "./MemberForm";
 
 export default function MemberDetail({ members, myId, onSwitchProfile }) {
   const { id } = useParams();
+  const navigate = useNavigate();
   const m = members[id];
   const isMe = id === myId;
   const [editing, setEditing] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function removeProfile() {
+    if (
+      !window.confirm(
+        `정말 '${m.name}' 프로필을 삭제할까요?\n삭제하면 되돌릴 수 없고, 프로필 선택 화면으로 돌아가요.`
+      )
+    )
+      return;
+    setBusy(true);
+    try {
+      await deleteMember(id);
+      navigate("/", { replace: true });
+      onSwitchProfile();
+    } finally {
+      setBusy(false);
+    }
+  }
 
   if (!m)
     return (
@@ -116,6 +136,13 @@ export default function MemberDetail({ members, myId, onSwitchProfile }) {
           </button>
           <button className="btn btn-ghost btn-small" onClick={onSwitchProfile}>
             다른 사람으로 전환
+          </button>
+          <button
+            className="btn btn-ghost btn-small btn-delete"
+            onClick={removeProfile}
+            disabled={busy}
+          >
+            {busy ? "삭제 중..." : "프로필 삭제"}
           </button>
         </div>
       )}
