@@ -222,6 +222,13 @@ body {
 .btn:active {
   transform: scale(0.98);
 }
+/* Link(<a>)를 버튼으로 쓸 때 — 밑줄 제거 + 가운데 정렬 (button과 달리 기본값이 없음) */
+a.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
 .btn:disabled {
   opacity: 0.4;
   cursor: default;
