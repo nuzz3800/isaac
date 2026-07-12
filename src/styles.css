@@ -743,6 +743,17 @@ a.panel:active {
   font-weight: 700;
   color: var(--ink);
 }
+.dash-top-right {
+  display: flex;
+  gap: 8px;
+}
+button.switch-chip {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--accent);
+  padding: 0 13px;
+}
 .dash-eyebrow {
   font-family: "CookieRun", sans-serif;
   font-size: 14px;

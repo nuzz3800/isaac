@@ -11,7 +11,7 @@ import {
 } from "../dates";
 import ChurchLogo from "../Logo";
 
-export default function Dashboard({ me, members }) {
+export default function Dashboard({ me, members, onSwitchProfile }) {
   const prayers = usePrayers();
   const events = useEvents();
   const today = todayISO();
@@ -53,7 +53,19 @@ export default function Dashboard({ me, members }) {
         <span className="round-chip">
           <ChurchLogo size={22} />
         </span>
-        <span className="round-chip date-chip">{formatDate(today)}</span>
+        <span className="dash-top-right">
+          <span className="round-chip date-chip">{formatDate(today)}</span>
+          <button
+            className="round-chip date-chip switch-chip"
+            onClick={() =>
+              window.confirm(
+                `${me.name}님이 아니에요? 프로필 선택 화면으로 돌아가요.`
+              ) && onSwitchProfile()
+            }
+          >
+            ⇄ 사용자 변경
+          </button>
+        </span>
       </header>
 
       <p className="dash-eyebrow">
