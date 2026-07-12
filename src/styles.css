@@ -931,6 +931,15 @@ button.switch-chip {
   color: var(--accent);
   margin: 14px 0 8px;
 }
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.copy-btn {
+  white-space: nowrap;
+}
 .shell .app.has-writebar {
   padding-bottom: calc(190px + env(safe-area-inset-bottom));
 }

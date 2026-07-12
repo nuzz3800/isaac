@@ -17,6 +17,7 @@ export default function Prayers({ members, myId }) {
   const [writing, setWriting] = useState(false);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
+  const [copiedWeek, setCopiedWeek] = useState(null);
 
   if (prayers === null)
     return (
@@ -59,6 +60,30 @@ export default function Prayers({ members, myId }) {
     }
   }
 
+  // 카톡 공유용: "2026/07/12 기도제목\n\n이름 - 내용" 형식
+  async function copyWeek(week) {
+    const lines = byWeek[week].map(
+      ([, p]) => `${members[p.memberId]?.name || "익명"} - ${p.text}`
+    );
+    const content = `${week.replaceAll("-", "/")} 기도제목\n\n${lines.join("\n")}`;
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedWeek(week);
+      setTimeout(() => setCopiedWeek(null), 1500);
+    } catch {
+      prompt("아래 내용을 복사해주세요:", content);
+    }
+  }
+
+  function copyButton(week) {
+    if (!byWeek[week]) return null;
+    return (
+      <button className="text-btn copy-btn" onClick={() => copyWeek(week)}>
+        {copiedWeek === week ? "복사됨! ✓" : "📋 복사"}
+      </button>
+    );
+  }
+
   return (
     <div className="app has-writebar">
       <p className="eyebrow">{BRAND.group}</p>
@@ -71,7 +96,10 @@ export default function Prayers({ members, myId }) {
       </p>
 
       {/* 이번 주 — 비어 있어도 항상 맨 위에 */}
-      <h2 className="section-title">이번 주 기도제목</h2>
+      <div className="section-head">
+        <h2 className="section-title">이번 주 기도제목</h2>
+        {copyButton(thisWeek)}
+      </div>
       {byWeek[thisWeek] ? (
         <PrayerList
           items={byWeek[thisWeek]}
@@ -90,7 +118,10 @@ export default function Prayers({ members, myId }) {
       {/* 지난주 */}
       {byWeek[lastWeek] && (
         <>
-          <h2 className="section-title">지난주 기도제목</h2>
+          <div className="section-head">
+            <h2 className="section-title">지난주 기도제목</h2>
+            {copyButton(lastWeek)}
+          </div>
           <PrayerList
             items={byWeek[lastWeek]}
             members={members}
@@ -105,7 +136,10 @@ export default function Prayers({ members, myId }) {
           <h2 className="section-title">지금까지의 기도제목</h2>
           {pastWeeks.map((week) => (
             <div key={week}>
-              <p className="week-label">{sectionTitle(week)}</p>
+              <div className="section-head">
+                <p className="week-label">{sectionTitle(week)}</p>
+                {copyButton(week)}
+              </div>
               <PrayerList
                 items={byWeek[week]}
                 members={members}
