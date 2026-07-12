@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ref, push, set, remove, onValue } from "firebase/database";
+import { ref, push, set, update, remove, onValue } from "firebase/database";
 import { db } from "../firebase";
 
 // events/{eventId}: { title, date(ISO), time?, place?, note?, createdBy, createdAt,
@@ -17,6 +17,11 @@ export function useEvents() {
 export async function addEvent(data) {
   const r = push(ref(db, "events"));
   await set(r, { ...data, createdAt: Date.now() });
+}
+
+// 수정/삭제는 누구나 가능 (신뢰 기반 — 만든 사람이 없어도 계획 변경 가능해야 함)
+export async function updateEvent(eventId, data) {
+  await update(ref(db, `events/${eventId}`), data);
 }
 
 export async function deleteEvent(eventId) {

@@ -179,6 +179,8 @@ function PrayerList({ items, members, myId }) {
         const count = Object.keys(prayedBy).length;
         const iPrayed = !!prayedBy[myId];
         const mine = p.memberId === myId;
+        // 작성자 프로필이 삭제된 기도는 아무도 못 고치게 되므로, 정리(삭제)만 허용
+        const orphaned = !mine && !author;
 
         return (
           <div className="panel" key={id}>
@@ -187,6 +189,18 @@ function PrayerList({ items, members, myId }) {
                 {author ? `${author.emoji} ${author.name}` : "익명"}
                 {p.answered && <span className="answered-chip">🌱 응답</span>}
               </b>
+              {orphaned && (
+                <button
+                  className="text-btn danger"
+                  onClick={() =>
+                    window.confirm(
+                      "작성자 프로필이 삭제된 기도제목이에요. 지울까요?"
+                    ) && deletePrayer(id)
+                  }
+                >
+                  삭제
+                </button>
+              )}
               {mine && editingId !== id && (
                 <span>
                   <button

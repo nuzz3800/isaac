@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { useEvents, addEvent, deleteEvent, setRsvp } from "../api/events";
+import {
+  useEvents,
+  addEvent,
+  updateEvent,
+  deleteEvent,
+  setRsvp,
+} from "../api/events";
 import { todayISO, formatDate, ddayLabel } from "../dates";
 import { BRAND } from "../branding";
 
@@ -69,6 +75,7 @@ export default function Events({ members, myId }) {
 }
 
 function EventItem({ id, event, members, myId, isPast }) {
+  const [editing, setEditing] = useState(false);
   const rsvp = event.rsvp || {};
   const mine = rsvp[myId];
   const yesNames = Object.entries(rsvp)
@@ -80,21 +87,37 @@ function EventItem({ id, event, members, myId, isPast }) {
     setRsvp(id, myId, mine === value ? null : value);
   }
 
+  if (editing)
+    return (
+      <EventForm
+        eventId={id}
+        initial={event}
+        myId={myId}
+        onDone={() => setEditing(false)}
+      />
+    );
+
   return (
     <div className={`panel${isPast ? " past" : ""}`}>
       <div className="row-between">
         <b>{event.title}</b>
-        {!isPast && <span className="dday-chip">{ddayLabel(event.date)}</span>}
-        {isPast && (
+        <span>
+          {!isPast && (
+            <span className="dday-chip">{ddayLabel(event.date)}</span>
+          )}
+          <button className="text-btn" onClick={() => setEditing(true)}>
+            수정
+          </button>
           <button
             className="text-btn danger"
             onClick={() =>
-              window.confirm("이 일정을 지울까요?") && deleteEvent(id)
+              window.confirm(`'${event.title}' 일정을 지울까요?`) &&
+              deleteEvent(id)
             }
           >
             삭제
           </button>
-        )}
+        </span>
       </div>
       <span className="member-sub">
         {formatDate(event.date)}
@@ -130,12 +153,12 @@ function EventItem({ id, event, members, myId, isPast }) {
   );
 }
 
-function EventForm({ onDone, myId }) {
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [place, setPlace] = useState("");
-  const [note, setNote] = useState("");
+function EventForm({ onDone, myId, eventId, initial }) {
+  const [title, setTitle] = useState(initial?.title || "");
+  const [date, setDate] = useState(initial?.date || "");
+  const [time, setTime] = useState(initial?.time || "");
+  const [place, setPlace] = useState(initial?.place || "");
+  const [note, setNote] = useState(initial?.note || "");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -144,15 +167,19 @@ function EventForm({ onDone, myId }) {
     if (!date) return setError("날짜를 골라주세요.");
     setBusy(true);
     setError("");
+    const data = {
+      title: title.trim(),
+      date,
+      time: time || null,
+      place: place.trim() || null,
+      note: note.trim() || null,
+    };
     try {
-      await addEvent({
-        title: title.trim(),
-        date,
-        time: time || null,
-        place: place.trim() || null,
-        note: note.trim() || null,
-        createdBy: myId,
-      });
+      if (eventId) {
+        await updateEvent(eventId, data);
+      } else {
+        await addEvent({ ...data, createdBy: myId });
+      }
       onDone();
     } catch {
       setError("저장에 실패했어요. 다시 시도해주세요.");
@@ -204,7 +231,7 @@ function EventForm({ onDone, myId }) {
             취소
           </button>
           <button className="btn btn-primary" onClick={save} disabled={busy}>
-            등록
+            {eventId ? "저장" : "등록"}
           </button>
         </div>
       </div>
