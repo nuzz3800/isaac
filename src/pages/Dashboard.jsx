@@ -2,6 +2,12 @@ import { Link } from "react-router-dom";
 import { usePrayers } from "../api/prayers";
 import { useEvents } from "../api/events";
 import {
+  useBingoBoard,
+  currentPeriod,
+  boardStats,
+  periodLabel,
+} from "../api/bingo";
+import {
   todayISO,
   formatDate,
   ddayLabel,
@@ -14,6 +20,8 @@ import ChurchLogo from "../Logo";
 export default function Dashboard({ me, members, onSwitchProfile }) {
   const prayers = usePrayers();
   const events = useEvents();
+  const period = currentPeriod();
+  const bingo = boardStats(useBingoBoard(period) || {});
   const today = todayISO();
 
   const hour = new Date().getHours();
@@ -165,6 +173,31 @@ export default function Dashboard({ me, members, onSwitchProfile }) {
             ))}
             <span className="member-sub">
               총 {weekPrayers.length}개 · {prayerAuthors}명이 나눴어요
+            </span>
+          </>
+        )}
+      </Link>
+
+      <div className="section-row">
+        <h2>{periodLabel(period)} 목표 빙고</h2>
+        <Link className="view-all" to="/bingo">
+          전체 보기
+        </Link>
+      </div>
+      <Link to="/bingo" className="panel cream">
+        {bingo.filled === 0 ? (
+          <>
+            <b>🏖 우리 사랑방의 공동 목표 9가지</b>
+            <span className="member-sub">
+              함께 정하고, 이루면 초록 스티커를 붙여요!
+            </span>
+          </>
+        ) : (
+          <>
+            <b>🏖 우리의 목표판</b>
+            <span className="member-sub">
+              목표 {bingo.filled}/9 · 달성 {bingo.doneCount}개 · 빙고{" "}
+              {bingo.lines}줄
             </span>
           </>
         )}

@@ -32,6 +32,7 @@
 | `/prayers` | 기도 | 주별(일요일 시작) 기도제목, 🙏 함께 기도해요 토글 |
 | `/events` | 일정 | 일정 등록, D-day, 참석/불참 RSVP |
 | `/play` | 놀이 | 콘텐츠 허브 — 거짓말게임, 누구일까요? |
+| `/bingo` | 목표 빙고 | 반기별 **사랑방 공동** 3x3 목표판 (개인별 아님) — 목표+목표일+칸별 의견 댓글, 달성 체크(초록 스티커). 홈 카드로 진입 |
 | `/game` | 거짓말게임 | **게이트/프로필 없이 접근 가능** (QR 손님용). 옛 링크 `/?room=` → `/game?room=` 리다이렉트 |
 
 ## 정체성/보안 모델 (소규모 신뢰 기반)
@@ -88,6 +89,10 @@ prayers/{prayerId}: { memberId, text, weekKey(일요일 ISO), createdAt,
 meetingLog/{id}: (구 모임 모드 잔재 — 기능 제거됨, 데이터만 남아있을 수 있음)
 events/{eventId}:   { title, date(ISO), time?, place?, note?, createdBy,
                       createdAt, rsvp: { memberId: "yes"|"no" } }
+bingo/{periodKey}/cells/{0~8}: { text, targetDate?(ISO), done?, doneAt?,
+                                 comments/{id}: {memberId, text, createdAt} }
+                    // 사랑방 공동 목표판. periodKey="2026H2" 형식.
+                    // 칸 저장은 set 금지(댓글 날아감) — update 사용
 rooms/{roomCode}:   거짓말게임 (아래 참고)
 ```
 
