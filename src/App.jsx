@@ -111,24 +111,21 @@ function Shell() {
       />
     );
 
-  const props = { members, myId, me };
+  const props = {
+    members,
+    myId,
+    me,
+    onSwitchProfile: () => {
+      clearMyId();
+      setMyIdState(null);
+    },
+  };
   return (
     <div className="shell">
       <Routes>
         <Route path="/" element={<Dashboard {...props} />} />
         <Route path="/members" element={<Members {...props} />} />
-        <Route
-          path="/members/:id"
-          element={
-            <MemberDetail
-              {...props}
-              onSwitchProfile={() => {
-                clearMyId();
-                setMyIdState(null);
-              }}
-            />
-          }
-        />
+        <Route path="/members/:id" element={<MemberDetail {...props} />} />
         <Route path="/prayers" element={<Prayers {...props} />} />
         <Route path="/events" element={<Events {...props} />} />
         <Route path="/play" element={<Play />} />
