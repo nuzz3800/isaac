@@ -46,26 +46,49 @@ export async function resetMT() {
 }
 
 // ── 인물 맞추기 ──────────────────────────────────────────────
-// order 앞 perTeam장은 1팀, 뒤 perTeam장은 2팀 몫
+// 세그먼트(판) 단위 진행: sequence가 판 순서 (예: [t1,t2,t1,t2] = 팀당 2판 교대),
+// order는 segSize × 판 수 만큼의 사진. correct는 판별 맞춘 개수 배열.
 
-export async function startFaceGame(order, perTeam) {
+export async function startFaceGame(order, segSize, sequence) {
   await set(ref(db, "mt/faceGame"), {
     status: "playing",
     order,
-    perTeam,
+    segSize,
+    sequence,
     pos: 0,
-    correct: { t1: 0, t2: 0 },
+    correct: sequence.map(() => 0),
   });
+}
+
+export function faceSegOf(g, pos = g.pos) {
+  return Math.floor(pos / g.segSize);
+}
+
+export function faceTeamOf(g, pos = g.pos) {
+  return g.sequence[faceSegOf(g, pos)];
+}
+
+// 지금 세그먼트가 그 팀의 몇 판째인지 (1부터)
+export function faceRoundOf(g, pos = g.pos) {
+  const si = faceSegOf(g, pos);
+  return g.sequence.slice(0, si + 1).filter((t) => t === g.sequence[si]).length;
+}
+
+export function faceTeamTotal(g, team) {
+  return g.sequence.reduce(
+    (sum, t, i) => (t === team ? sum + (g.correct?.[i] || 0) : sum),
+    0
+  );
 }
 
 export async function judgeFace(mt, isCorrect) {
   const g = mt.faceGame;
-  const team = g.pos < g.perTeam ? "t1" : "t2";
+  const si = faceSegOf(g);
   const next = g.pos + 1;
   const updates = { pos: next };
-  if (isCorrect) updates[`correct/${team}`] = (g.correct?.[team] || 0) + 1;
+  if (isCorrect) updates[`correct/${si}`] = (g.correct?.[si] || 0) + 1;
   if (next >= g.order.length) updates.status = "done";
-  else if (next === g.perTeam) updates.awaitSwitch = true;
+  else if (next % g.segSize === 0) updates.awaitSwitch = true;
   await update(ref(db, "mt/faceGame"), updates);
 }
 
@@ -73,14 +96,14 @@ export async function ackTeamSwitch() {
   await update(ref(db, "mt/faceGame"), { awaitSwitch: null });
 }
 
-// 맞춘 개수 × 배율을 팀 포인트에 더하고 게임 종료
+// 맞춘 개수 합계 × 배율을 팀 포인트에 더하고 게임 종료
 export async function applyFacePoints(mt, multiplier) {
   const g = mt.faceGame;
   await update(ref(db, "mt"), {
     "teams/t1/points":
-      (mt.teams.t1.points || 0) + (g.correct?.t1 || 0) * multiplier,
+      (mt.teams.t1.points || 0) + faceTeamTotal(g, "t1") * multiplier,
     "teams/t2/points":
-      (mt.teams.t2.points || 0) + (g.correct?.t2 || 0) * multiplier,
+      (mt.teams.t2.points || 0) + faceTeamTotal(g, "t2") * multiplier,
     faceGame: null,
   });
 }

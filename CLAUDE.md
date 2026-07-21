@@ -34,7 +34,7 @@
 | `/play` | 놀이 | 콘텐츠 허브 — 거짓말게임, 누구일까요? |
 | `/bingo` | 목표 빙고 | 반기별 **사랑방 공동** 3x3 목표판 (개인별 아님) — 목표+목표일+칸별 의견 댓글, 달성 체크(초록 스티커). 홈 카드로 진입 |
 | `/game` | 거짓말게임 | **게이트/프로필 없이 접근 가능** (QR 손님용). 옛 링크 `/?room=` → `/game?room=` 리다이렉트 |
-| `/mt`, `/mt/faces` | MT 스페셜 | 두 팀 점수판(포인트 상시 수동 수정 — 오프라인 게임 반영용) + MT 게임 허브. 태블릿 진행 전제(`.app.wide` 900px). 인물 맞추기: 팀당 15장, 3초 카운트다운, 진행자 수동 정답/오답 판정, 맞춘 개수×배율 입력값=포인트 반영. 사진은 `src/assets/mt-faces/`에 "정답이름.jpg"로 추가(빌드 필요) |
+| `/mt`, `/mt/faces` | MT 스페셜 | 두 팀 점수판(포인트 상시 수동 수정 — 오프라인 게임 반영용) + MT 게임 허브. 태블릿 진행 전제(`.app.wide` 900px). 인물 맞추기: 팀당 15장×2판, 1팀→2팀 교대(sequence [t1,t2,t1,t2]), 3초 카운트다운, 진행자 수동 정답/오답 판정, 맞춘 개수 합계×배율 입력값=포인트 반영. 사진은 `src/assets/mt-faces/`에 "정답이름.jpg"로 추가(빌드 필요, 60장 미만이면 판 수 자동 축소) |
 
 ## 정체성/보안 모델 (소규모 신뢰 기반)
 
@@ -95,7 +95,8 @@ bingo/{periodKey}/cells/{0~8}: { text, targetDate?(ISO), done?, doneAt?,
                     // 사랑방 공동 목표판. periodKey="2026H2" 형식.
                     // 칸 저장은 set 금지(댓글 날아감) — update 사용
 mt: { createdAt, teams: { t1: {name, points}, t2: {name, points} },
-      faceGame?: { status, order[이름], perTeam, pos, correct{t1,t2}, awaitSwitch? } }
+      faceGame?: { status, order[이름], segSize, sequence[팀키],
+                   pos, correct[판별 개수], awaitSwitch? } }
 rooms/{roomCode}:   거짓말게임 (아래 참고)
 ```
 

@@ -7,10 +7,14 @@ import {
   ackTeamSwitch,
   applyFacePoints,
   cancelFaceGame,
+  faceSegOf,
+  faceTeamOf,
+  faceRoundOf,
+  faceTeamTotal,
 } from "../api/mt";
 import { FACES, FACE_MAP } from "../mtFaces";
 
-const MAX_PER_TEAM = 15;
+const SEG_SIZE = 15;
 const COUNTDOWN = 3;
 
 function shuffle(arr) {
@@ -20,6 +24,18 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+// 사진 수에 따른 판 구성: 60장 이상이면 팀당 2판 교대(1팀→2팀→1팀→2팀)
+function planGame(poolSize) {
+  if (poolSize >= SEG_SIZE * 4)
+    return { segSize: SEG_SIZE, sequence: ["t1", "t2", "t1", "t2"] };
+  if (poolSize >= 2)
+    return {
+      segSize: Math.min(SEG_SIZE, Math.floor(poolSize / 2)),
+      sequence: ["t1", "t2"],
+    };
+  return null;
 }
 
 export default function MTFaces() {
@@ -40,7 +56,8 @@ export default function MTFaces() {
 }
 
 function FaceSetup() {
-  const perTeam = Math.min(MAX_PER_TEAM, Math.floor(FACES.length / 2));
+  const plan = planGame(FACES.length);
+  const roundsPerTeam = plan ? plan.sequence.length / 2 : 0;
 
   return (
     <div className="app wide">
@@ -58,13 +75,13 @@ function FaceSetup() {
       <div className="panel cream">
         <b>준비된 사진 {FACES.length}장</b>
         <span className="member-sub">
-          {perTeam > 0
-            ? `한 판에 팀당 ${perTeam}장씩, 총 ${perTeam * 2}장을 사용해요 (1팀 먼저 → 2팀)`
+          {plan
+            ? `팀당 ${plan.segSize}장 × ${roundsPerTeam}판 (총 ${plan.segSize * plan.sequence.length}장) · 1팀 → 2팀 교대로 진행해요`
             : "사진이 아직 없어요"}
         </span>
       </div>
 
-      {perTeam === 0 ? (
+      {!plan ? (
         <div className="panel">
           <b>사진 넣는 법 📂</b>
           <span className="member-sub">
@@ -79,12 +96,16 @@ function FaceSetup() {
             className="btn btn-primary"
             onClick={() =>
               startFaceGame(
-                shuffle(FACES.map((f) => f.name)).slice(0, perTeam * 2),
-                perTeam
+                shuffle(FACES.map((f) => f.name)).slice(
+                  0,
+                  plan.segSize * plan.sequence.length
+                ),
+                plan.segSize,
+                plan.sequence
               )
             }
           >
-            게임 시작! (팀당 {perTeam}장)
+            게임 시작! (팀당 {plan.segSize}장 × {roundsPerTeam}판)
           </button>
         </div>
       )}
@@ -94,29 +115,33 @@ function FaceSetup() {
 
 function FacePlaying({ mt }) {
   const g = mt.faceGame;
-  const teamKey = g.pos < g.perTeam ? "t1" : "t2";
-  const team = mt.teams[teamKey];
 
-  if (g.awaitSwitch)
+  if (g.awaitSwitch) {
+    const nextTeam = mt.teams[faceTeamOf(g)];
+    const nextRound = faceRoundOf(g);
     return (
       <div className="app wide center">
         <div className="hero">
           <div className="hero-emoji">🔄</div>
-          <h1 className="title">이제 {mt.teams.t2.name} 차례!</h1>
+          <h1 className="title">
+            이제 {nextTeam.name} {nextRound}판 차례!
+          </h1>
           <p className="subtitle">
-            {mt.teams.t1.name}: {g.correct?.t1 || 0}개 성공 — 준비되면 시작해요
+            현재 스코어 — {mt.teams.t1.name} {faceTeamTotal(g, "t1")}개 ·{" "}
+            {mt.teams.t2.name} {faceTeamTotal(g, "t2")}개
           </p>
         </div>
         <button className="btn btn-primary" onClick={ackTeamSwitch}>
-          {mt.teams.t2.name} 시작! 🔥
+          {nextTeam.name} 시작! 🔥
         </button>
       </div>
     );
+  }
 
-  return <FaceRound key={g.pos} mt={mt} g={g} teamKey={teamKey} team={team} />;
+  return <FaceRound key={g.pos} mt={mt} g={g} />;
 }
 
-function FaceRound({ mt, g, teamKey, team }) {
+function FaceRound({ mt, g }) {
   const [sec, setSec] = useState(COUNTDOWN);
   const [peek, setPeek] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -127,9 +152,13 @@ function FaceRound({ mt, g, teamKey, team }) {
     return () => clearTimeout(t);
   }, [sec]);
 
+  const teamKey = faceTeamOf(g);
+  const team = mt.teams[teamKey];
+  const round = faceRoundOf(g);
   const name = g.order[g.pos];
   const face = FACE_MAP[name];
-  const idxInTeam = g.pos < g.perTeam ? g.pos : g.pos - g.perTeam;
+  const idxInSeg = g.pos % g.segSize;
+  const segCorrect = g.correct?.[faceSegOf(g)] || 0;
 
   async function judge(isCorrect) {
     setBusy(true);
@@ -143,9 +172,12 @@ function FaceRound({ mt, g, teamKey, team }) {
   return (
     <div className="app wide">
       <div className="row-between">
-        <b className="team-name">{team.name}</b>
+        <b className="team-name">
+          {team.name} · {round}판
+        </b>
         <span className="member-sub">
-          {idxInTeam + 1} / {g.perTeam} · 맞춘 개수 {g.correct?.[teamKey] || 0}
+          {idxInSeg + 1} / {g.segSize} · 이번 판 {segCorrect}개 · 합계{" "}
+          {faceTeamTotal(g, teamKey)}개
         </span>
       </div>
 
@@ -202,8 +234,17 @@ function FaceDone({ mt }) {
   const [mult, setMult] = useState("10");
   const [busy, setBusy] = useState(false);
   const m = Number(mult) || 0;
-  const c1 = g.correct?.t1 || 0;
-  const c2 = g.correct?.t2 || 0;
+  const c1 = faceTeamTotal(g, "t1");
+  const c2 = faceTeamTotal(g, "t2");
+
+  // 팀별 판당 점수 (예: "1판 8 · 2판 11")
+  function breakdown(team) {
+    return g.sequence
+      .map((t, i) => ({ t, n: g.correct?.[i] || 0 }))
+      .filter(({ t }) => t === team)
+      .map(({ n }, idx) => `${idx + 1}판 ${n}`)
+      .join(" · ");
+  }
 
   return (
     <div className="app wide">
@@ -219,9 +260,10 @@ function FaceDone({ mt }) {
           <div className="panel team-card" key={tk}>
             <b className="team-name">{mt.teams[tk].name}</b>
             <span className="team-score">
-              {g.correct?.[tk] || 0}
+              {faceTeamTotal(g, tk)}
               <span className="pts">개</span>
             </span>
+            <span className="member-sub">{breakdown(tk)}</span>
           </div>
         ))}
       </div>
@@ -229,7 +271,7 @@ function FaceDone({ mt }) {
       <div className="panel">
         <b>포인트로 반영하기</b>
         <span className="member-sub">
-          맞춘 개수 × 배율만큼 팀 포인트에 더해요
+          맞춘 개수 합계 × 배율만큼 팀 포인트에 더해요
         </span>
         <div className="field-row">
           <input
