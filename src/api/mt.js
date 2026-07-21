@@ -111,3 +111,46 @@ export async function applyFacePoints(mt, multiplier) {
 export async function cancelFaceGame() {
   await remove(ref(db, "mt/faceGame"));
 }
+
+// ── 이 색 누구게? (단순화 캐릭터 맞추기) ─────────────────────
+// 두 팀 동시 대결: 단순화 그림 → 정답 공개 → 맞춘 팀 기록.
+// mt/simpleGame: { status, order[이름], pos, revealed, correct: {t1, t2} }
+
+export async function startSimpleGame(order) {
+  await set(ref(db, "mt/simpleGame"), {
+    status: "playing",
+    order,
+    pos: 0,
+    revealed: false,
+    correct: { t1: 0, t2: 0 },
+  });
+}
+
+export async function revealSimple() {
+  await update(ref(db, "mt/simpleGame"), { revealed: true });
+}
+
+// team: "t1" | "t2" | null(아무도 못 맞힘) → 기록 후 다음 문제로
+export async function scoreSimple(mt, team) {
+  const g = mt.simpleGame;
+  const next = g.pos + 1;
+  const updates = { pos: next, revealed: false };
+  if (team) updates[`correct/${team}`] = (g.correct?.[team] || 0) + 1;
+  if (next >= g.order.length) updates.status = "done";
+  await update(ref(db, "mt/simpleGame"), updates);
+}
+
+export async function applySimplePoints(mt, multiplier) {
+  const g = mt.simpleGame;
+  await update(ref(db, "mt"), {
+    "teams/t1/points":
+      (mt.teams.t1.points || 0) + (g.correct?.t1 || 0) * multiplier,
+    "teams/t2/points":
+      (mt.teams.t2.points || 0) + (g.correct?.t2 || 0) * multiplier,
+    simpleGame: null,
+  });
+}
+
+export async function cancelSimpleGame() {
+  await remove(ref(db, "mt/simpleGame"));
+}

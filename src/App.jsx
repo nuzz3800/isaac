@@ -25,6 +25,7 @@ import Quiz from "./pages/Quiz";
 import Bingo from "./pages/Bingo";
 import MT from "./pages/MT";
 import MTFaces from "./pages/MTFaces";
+import MTSimple from "./pages/MTSimple";
 
 const PASS_KEY = "joel-pass";
 
@@ -136,6 +137,7 @@ function Shell() {
         <Route path="/bingo" element={<Bingo {...props} />} />
         <Route path="/mt" element={<MT />} />
         <Route path="/mt/faces" element={<MTFaces />} />
+        <Route path="/mt/simple" element={<MTSimple />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <TabBar />
