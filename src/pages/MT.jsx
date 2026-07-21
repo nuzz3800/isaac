@@ -9,6 +9,7 @@ import {
   resetMT,
 } from "../api/mt";
 import { FACES } from "../mtFaces";
+import { SIMPLE_PAIRS } from "../mtSimple";
 import { BRAND } from "../branding";
 
 export default function MT() {
@@ -47,6 +48,17 @@ export default function MT() {
             <b>인물 맞추기</b>
             <span className="member-sub">
               사진 보고 3초 안에! · 사진 {FACES.length}장 준비됨
+            </span>
+          </span>
+          <span className="chevron">›</span>
+        </Link>
+        <Link to="/mt/simple" className="panel member-card">
+          <span className="avatar">🎨</span>
+          <span className="member-info">
+            <b>이 색 누구게?</b>
+            <span className="member-sub">
+              단순화 그림 보고 캐릭터 맞추기 · 두 팀 동시 대결 · 문제{" "}
+              {SIMPLE_PAIRS.length}개
             </span>
           </span>
           <span className="chevron">›</span>

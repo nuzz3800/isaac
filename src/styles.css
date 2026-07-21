@@ -1032,6 +1032,16 @@ button.switch-chip {
 .judge-btn.right {
   background: var(--green);
 }
+.judge-btn.team-a {
+  background: var(--navy);
+}
+.judge-btn.team-b {
+  background: var(--accent);
+}
+.btn-reveal {
+  min-height: 64px;
+  font-size: 20px;
+}
 
 /* ── 목표 빙고 (바다 테마 — 인쇄물 디자인 참고) ── */
 .bingo-panel {
