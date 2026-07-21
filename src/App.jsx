@@ -23,6 +23,8 @@ import Events from "./pages/Events";
 import Play from "./pages/Play";
 import Quiz from "./pages/Quiz";
 import Bingo from "./pages/Bingo";
+import MT from "./pages/MT";
+import MTFaces from "./pages/MTFaces";
 
 const PASS_KEY = "joel-pass";
 
@@ -132,6 +134,8 @@ function Shell() {
         <Route path="/play" element={<Play />} />
         <Route path="/quiz" element={<Quiz {...props} />} />
         <Route path="/bingo" element={<Bingo {...props} />} />
+        <Route path="/mt" element={<MT />} />
+        <Route path="/mt/faces" element={<MTFaces />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <TabBar />
