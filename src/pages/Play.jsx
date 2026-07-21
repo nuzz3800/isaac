@@ -9,6 +9,17 @@ export default function Play() {
       <p className="subtitle">모임 때 다 같이 즐기는 콘텐츠</p>
 
       <div className="stack">
+        <Link to="/mt" className="panel member-card highlight">
+          <span className="avatar">⛺</span>
+          <span className="member-info">
+            <b>MT 스페셜</b>
+            <span className="member-sub">
+              팀 대항 점수판 + MT 게임 모음 · 이번 주 MT용!
+            </span>
+          </span>
+          <span className="chevron">›</span>
+        </Link>
+
         <Link to="/game" className="panel member-card">
           <span className="avatar">🤥</span>
           <span className="member-info">
