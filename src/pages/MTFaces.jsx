@@ -12,19 +12,15 @@ import {
   faceRoundOf,
   faceTeamTotal,
 } from "../api/mt";
-import { FACES, FACE_MAP } from "../mtFaces";
+import {
+  FACES,
+  FACE_MAP,
+  categoryCounts,
+  buildBalancedOrder,
+} from "../mtFaces";
 
 const SEG_SIZE = 15;
 const COUNTDOWN = 3;
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 // 사진 수에 따른 판 구성: 60장 이상이면 팀당 2판 교대(1팀→2팀→1팀→2팀)
 function planGame(poolSize) {
@@ -73,10 +69,15 @@ function FaceSetup() {
       </p>
 
       <div className="panel cream">
-        <b>준비된 사진 {FACES.length}장</b>
+        <b>
+          준비된 사진 {FACES.length}장 —{" "}
+          {Object.entries(categoryCounts())
+            .map(([cat, n]) => `${cat} ${n}`)
+            .join(" · ")}
+        </b>
         <span className="member-sub">
           {plan
-            ? `팀당 ${plan.segSize}장 × ${roundsPerTeam}판 (총 ${plan.segSize * plan.sequence.length}장) · 1팀 → 2팀 교대로 진행해요`
+            ? `팀당 ${plan.segSize}장 × ${roundsPerTeam}판 (총 ${plan.segSize * plan.sequence.length}장) · 1팀 → 2팀 교대 · 카테고리는 각 판에 골고루 섞여요`
             : "사진이 아직 없어요"}
         </span>
       </div>
@@ -96,10 +97,7 @@ function FaceSetup() {
             className="btn btn-primary"
             onClick={() =>
               startFaceGame(
-                shuffle(FACES.map((f) => f.name)).slice(
-                  0,
-                  plan.segSize * plan.sequence.length
-                ),
+                buildBalancedOrder(plan.sequence.length, plan.segSize),
                 plan.segSize,
                 plan.sequence
               )
